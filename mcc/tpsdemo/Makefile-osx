@@ -1,0 +1,35 @@
+#  A GNU Makefile for compiling the program on OS X.
+
+
+#  If the include directory for Boost library headers is not specified,
+#  use the installation associated with MacPorts
+
+ifndef BOOST_INCLUDE_DIR
+  BOOST_INCLUDE_DIR := /opt/local/include
+endif
+
+
+PGRM := tpsdemo
+SRCS := main.cpp linalg3d.cpp spline.cpp
+OBJS := $(SRCS:.cpp=.o)
+
+
+#  Command-line to compile GLUT app according Apple:
+#    cc -framework GLUT -framework OpenGL -framework Cocoa glutapp.c -o glutapp
+#  URL: http://developer.apple.com/qa/qa2008/qa1613.html
+#  Title: Technical Q&A QA1613 - Using GLUT and OpenGL on Mac OS X
+
+FRAMEWORKS := GLUT OpenGL Cocoa
+FRAMEWORK_OPTS := $(foreach framework, $(FRAMEWORKS), -framework $(framework))
+
+$(PGRM) : $(OBJS)
+	g++ $(FRAMEWORK_OPTS) $^ -o $@
+
+
+$(OBJS) : %.o : %.cpp
+	g++ -c -O2 -I $(BOOST_INCLUDE_DIR) $<
+
+
+.PHONY : clean
+clean :
+	rm -f $(PGRM) $(OBJS)
