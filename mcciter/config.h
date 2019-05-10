@@ -1,0 +1,3 @@
+#define VERSION_RELEASE      "2.1"
+#define VERSION_RELEASE_ABBR "2.1"
+#define SUBVERSION_REVISION  "0"
