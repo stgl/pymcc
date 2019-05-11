@@ -75,8 +75,18 @@ if (MSVC)
   string(REGEX REPLACE "/EHsc" "/EHa" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 endif()
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+# determine if OpenMP can/should be used
+option(USE_OPENMP "Enable OpenMP?" ON) # set to OFF to disable
+if(USE_OPENMP)
+ FIND_PACKAGE(OpenMP)
+ if(OPENMP_FOUND OR OpenMP_FOUND)
+  message(STATUS "OpenMP flags = ${OpenMP_CXX_FLAGS}")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+ else(OPENMP_FOUND OR OpenMP_FOUND)
+  message(STATUS "OpenMP not supported")
+ endif(OPENMP_FOUND OR OpenMP_FOUND)
+endif(USE_OPENMP)
 
 set (PROGRAM_NAME mcc-lidar)
 add_executable (${PROGRAM_NAME} ${SRC_FILES} ${HDR_FILES} ${TPSDEMO_SRCS})
