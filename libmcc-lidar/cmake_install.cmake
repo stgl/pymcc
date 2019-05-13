@@ -1,4 +1,4 @@
-# Install script for directory: /Users/hilley/Documents/GitHub/pymcc/libmcc
+# Install script for directory: /Users/hilley/Documents/GitHub/pymcc/libmcc-lidar
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/hilley/Documents/GitHub/pymcc/libmcc/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/hilley/Documents/GitHub/pymcc/libmcc-lidar/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
