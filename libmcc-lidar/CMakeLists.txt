@@ -16,11 +16,11 @@ include (VersionControl.cmake)
 vcs_get_revision(PROJECT_WC_REVISION)
 message("Current Subversion revision is ${PROJECT_WC_REVISION}")
 
-set (CONFIG_HEADER "${PROJECT_BINARY_DIR}/config.h")
-configure_file ("${PROJECT_SOURCE_DIR}/config.h.in"
+set (CONFIG_HEADER ./config.h")
+configure_file (./config.h.in"
                 "${CONFIG_HEADER}")
-include_directories ("${PROJECT_BINARY_DIR}")
-include_directories ("${PROJECT_BINARY_DIR}/include")
+include_directories (.)
+include_directories ("./include")
 
 if (WIN32)
   #  The FindBoost module looks for dynamic libraries by default.  But Boost's
