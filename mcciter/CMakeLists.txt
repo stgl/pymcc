@@ -51,8 +51,8 @@ include_directories ( ${Boost_INCLUDE_DIRS} ${LIBLAS_INCLUDE_DIRS} )
 # FUSION's code for LDA format not integrated yet
 #add_subdirectory (fusion)
 
-file (GLOB SRC_FILES *.cpp)
-file (GLOB HDR_FILES *.h)
+file (GLOB SRC_FILES "*.cpp" "src/*.cpp")
+file (GLOB HDR_FILES "*.h" "include/*.h")
 list (INSERT HDR_FILES 0 "${CONFIG_HEADER}")
 
 # Have TPSDemo spline code use double-precision for vector coordinates
@@ -88,15 +88,18 @@ if(USE_OPENMP)
  endif(OPENMP_FOUND OR OpenMP_FOUND)
 endif(USE_OPENMP)
 
+# make release version
+set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "lib")
+
 set (PROGRAM_NAME mcc-lidar)
-add_executable (${PROGRAM_NAME} ${SRC_FILES} ${HDR_FILES} ${TPSDEMO_SRCS})
+add_library (${PROGRAM_NAME} static ${SRC_FILES} ${HDR_FILES} ${TPSDEMO_SRCS})
 target_link_libraries (${PROGRAM_NAME}
                        ${Boost_FILESYSTEM_LIBRARY}
                        ${Boost_PROGRAM_OPTIONS_LIBRARY}
                        ${Boost_SYSTEM_LIBRARY}
                        ${LIBLAS_LIBRARY} )
 
-install (TARGETS ${PROGRAM_NAME} DESTINATION bin)
 if (MSVC)
 	set (LIBLAS_AUX_DLL_NAMES comerr32
 							gdal18
