@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/hilley/repos/mcc/mcclidar-code-r198-trunk-src
+CMAKE_SOURCE_DIR = /homedirs/hilley/pymcc/mcciter
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/hilley/repos/mcc/mcclidar-code-r198-trunk-src
+CMAKE_BINARY_DIR = /homedirs/hilley/pymcc/mcciter
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -94,7 +94,7 @@ package/fast: package
 # Special rule for the target package_source
 package_source:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool for source..."
-	/usr/bin/cpack --config ./CPackSourceConfig.cmake /home/hilley/repos/mcc/mcclidar-code-r198-trunk-src/CPackSourceConfig.cmake
+	/usr/bin/cpack --config ./CPackSourceConfig.cmake /homedirs/hilley/pymcc/mcciter/CPackSourceConfig.cmake
 .PHONY : package_source
 
 # Special rule for the target package_source
@@ -148,9 +148,9 @@ list_install_components/fast: list_install_components
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hilley/repos/mcc/mcclidar-code-r198-trunk-src/CMakeFiles /home/hilley/repos/mcc/mcclidar-code-r198-trunk-src/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /homedirs/hilley/pymcc/mcciter/CMakeFiles /homedirs/hilley/pymcc/mcciter/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hilley/repos/mcc/mcclidar-code-r198-trunk-src/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /homedirs/hilley/pymcc/mcciter/CMakeFiles 0
 .PHONY : all
 
 # The main clean target

@@ -28,6 +28,8 @@
 #include "LineIndent.h"
 #include "PointCanopyHeightFile.h"
 #include "StackedPoints.h"
+#include "UnclassifiedPoints.h"
+
 
 namespace mcc
 {
@@ -46,7 +48,7 @@ namespace mcc
 
   //---------------------------------------------------------------------------
 
-  void Algorithm::classifyPoints(IUnclassifiedPoints & points,
+  void Algorithm::classifyPoints(UnclassifiedPoints & points,
                                  double                scaleDomain2Spacing,
                                  double                curvatureThreshold)
   {
@@ -70,21 +72,23 @@ namespace mcc
     convergencePercent[3] = 0.0001;  // 0.01%
 
     // points not yet classified
+
+    UnclassifiedPoints splinePoints(points);
     IUnclassifiedPoints & U = points;
 
     // Locate points that are vertically stacked (at same x,y coordinates), and
     // within each stack, classify all points but the lowest one as non-ground.
     std::cout << "Searching for points with the same x,y coordinates..." << std::endl;
     std::vector<IPoint *> unclassifiedDuplicates;
-    StackedPoints::classifyPointsAtSameXY(points, unclassifiedDuplicates);
-    int nClassified = points.removeClassified();
+    StackedPoints::classifyPointsAtSameXY(splinePoints, unclassifiedDuplicates);
+    int nClassified = splinePoints.removeClassified();
     std::cout << "  " << nClassified << " points classified as non-ground" << std::endl;
 
     DuplicatePoints duplicatePoints(unclassifiedDuplicates);
     std::string pluralEnding = (duplicatePoints.setCount() == 1) ? "" : "s";
     std::cout << "Identified " << duplicatePoints.setCount() << " set" << pluralEnding << " of unclassified duplicate points" << std::endl;
     int nDuplicatesPutAside = duplicatePoints.putAsideAllButOnePointPerSet();
-    nDuplicatesPutAside = points.removeClassified();
+    nDuplicatesPutAside = splinePoints.removeClassified();
 
     LineIndent indent("  ");
 
@@ -105,8 +109,8 @@ namespace mcc
           break;
         }
         std::cout << "SD " << SD << " - Pass " << pass << std::endl
-                  << indent << "Interpolating " << U.count() << " points:" << std::endl;
-        boost::shared_ptr<IRasterSurface> rasterSurface = surfaceInterpolation_(U, CR[SD], tension);
+                  << indent << "Interpolating " << splinePoints.count() << " points:" << std::endl;
+        boost::shared_ptr<IRasterSurface> rasterSurface = surfaceInterpolation_(splinePoints, CR[SD], tension);
 
         std::cout << indent << "Averaging raster surface..." << std::endl;
         rasterSurface->average(3);  // kernel = 3x3
@@ -166,35 +170,36 @@ namespace mcc
 
   // Additions by GEH:
 
-  void Algorithm::labelPointsUsingPass(IUnclassifiedPoints & points,
+  void Algorithm::labelPointsUsingPass(UnclassifiedPoints & points,
                                  double                scaleDomainSpacing)
   {
 
     // points not yet classified
+
     IUnclassifiedPoints & U = points;
+    UnclassifiedPoints splinePoints(points);
 
     // Locate points that are vertically stacked (at same x,y coordinates), and
     // within each stack, classify all points but the lowest one as non-ground.
     std::cout << "Searching for points with the same x,y coordinates..." << std::endl;
     std::vector<IPoint *> unclassifiedDuplicates;
-    StackedPoints::classifyPointsAtSameXY(points, unclassifiedDuplicates);
-    int nClassified = points.removeClassified();
+    StackedPoints::classifyPointsAtSameXY(splinePoints, unclassifiedDuplicates);
+    int nClassified = splinePoints.removeClassified();
     std::cout << "  " << nClassified << " points classified as non-ground" << std::endl;
 
     DuplicatePoints duplicatePoints(unclassifiedDuplicates);
     std::string pluralEnding = (duplicatePoints.setCount() == 1) ? "" : "s";
     std::cout << "Identified " << duplicatePoints.setCount() << " set" << pluralEnding << " of unclassified duplicate points" << std::endl;
     int nDuplicatesPutAside = duplicatePoints.putAsideAllButOnePointPerSet();
-    nDuplicatesPutAside = points.removeClassified();
+    nDuplicatesPutAside = splinePoints.removeClassified();
 
 
     LineIndent indent("  ");
 
-
     std::cout << "Scale domain: " << scaleDomainSpacing << std::endl;
 
-    std::cout << "Interpolating " << U.count() << " points:" << std::endl;
-    boost::shared_ptr<IRasterSurface> rasterSurface = surfaceInterpolation_(U, scaleDomainSpacing, tension);
+    std::cout << "Interpolating " << splinePoints.count() << " points:" << std::endl;
+    boost::shared_ptr<IRasterSurface> rasterSurface = surfaceInterpolation_(splinePoints, scaleDomainSpacing, tension);
 
     std::cout << indent << "Averaging raster surface..." << std::endl;
     rasterSurface->average(3);  // kernel = 3x3

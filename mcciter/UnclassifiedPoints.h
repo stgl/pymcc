@@ -32,6 +32,7 @@ namespace mcc
 
       // Create an instance that references an existing point vector.
       UnclassifiedPoints(boost::shared_ptr<PointVector> points);
+      UnclassifiedPoints(const UnclassifiedPoints & pts);
 
       // IUnclassifiedPoints interface
       IPointVector::size_type removeClassified();
