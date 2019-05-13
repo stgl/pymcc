@@ -48,13 +48,24 @@ RM = /usr/local/Cellar/cmake/3.14.3/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/hilley/Documents/GitHub/pymcc/mcciter
+CMAKE_SOURCE_DIR = /Users/hilley/Documents/GitHub/pymcc/libmcc
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/hilley/Documents/GitHub/pymcc/mcciter
+CMAKE_BINARY_DIR = /Users/hilley/Documents/GitHub/pymcc/libmcc
 
 #=============================================================================
 # Targets provided globally by CMake.
+
+# Special rule for the target package
+package: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool..."
+	/usr/local/Cellar/cmake/3.14.3/bin/cpack --config ./CPackConfig.cmake
+.PHONY : package
+
+# Special rule for the target package
+package/fast: package
+
+.PHONY : package/fast
 
 # Special rule for the target rebuild_cache
 rebuild_cache:
@@ -70,7 +81,7 @@ rebuild_cache/fast: rebuild_cache
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
-	/usr/local/Cellar/cmake/3.6.1/bin/ccmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/usr/local/Cellar/cmake/3.14.3/bin/ccmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -81,7 +92,7 @@ edit_cache/fast: edit_cache
 # Special rule for the target package_source
 package_source:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool for source..."
-	/usr/local/Cellar/cmake/3.14.3/bin/cpack --config ./CPackSourceConfig.cmake /Users/hilley/Documents/GitHub/pymcc/mcciter/CPackSourceConfig.cmake
+	/usr/local/Cellar/cmake/3.14.3/bin/cpack --config ./CPackSourceConfig.cmake /Users/hilley/Documents/GitHub/pymcc/libmcc/CPackSourceConfig.cmake
 .PHONY : package_source
 
 # Special rule for the target package_source
@@ -89,22 +100,11 @@ package_source/fast: package_source
 
 .PHONY : package_source/fast
 
-# Special rule for the target package
-package: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool..."
-	/usr/local/Cellar/cmake/3.14.3/bin/cpack --config ./CPackConfig.cmake
-.PHONY : package
-
-# Special rule for the target package
-package/fast: package
-
-.PHONY : package/fast
-
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/hilley/Documents/GitHub/pymcc/mcciter/CMakeFiles /Users/hilley/Documents/GitHub/pymcc/mcciter/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/hilley/Documents/GitHub/pymcc/libmcc/CMakeFiles /Users/hilley/Documents/GitHub/pymcc/libmcc/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/hilley/Documents/GitHub/pymcc/mcciter/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/hilley/Documents/GitHub/pymcc/libmcc/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -133,17 +133,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named mcc-lidar
+# Target rules for targets named mcc
 
 # Build rule for target.
-mcc-lidar: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 mcc-lidar
-.PHONY : mcc-lidar
+mcc: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 mcc
+.PHONY : mcc
 
 # fast build rule for target.
-mcc-lidar/fast:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/build
-.PHONY : mcc-lidar/fast
+mcc/fast:
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/build
+.PHONY : mcc/fast
 
 Algorithm.o: Algorithm.cpp.o
 
@@ -151,7 +151,7 @@ Algorithm.o: Algorithm.cpp.o
 
 # target to build an object file
 Algorithm.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/Algorithm.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/Algorithm.cpp.o
 .PHONY : Algorithm.cpp.o
 
 Algorithm.i: Algorithm.cpp.i
@@ -160,7 +160,7 @@ Algorithm.i: Algorithm.cpp.i
 
 # target to preprocess a source file
 Algorithm.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/Algorithm.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/Algorithm.cpp.i
 .PHONY : Algorithm.cpp.i
 
 Algorithm.s: Algorithm.cpp.s
@@ -169,7 +169,7 @@ Algorithm.s: Algorithm.cpp.s
 
 # target to generate assembly for a file
 Algorithm.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/Algorithm.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/Algorithm.cpp.s
 .PHONY : Algorithm.cpp.s
 
 BinaryFile.o: BinaryFile.cpp.o
@@ -178,7 +178,7 @@ BinaryFile.o: BinaryFile.cpp.o
 
 # target to build an object file
 BinaryFile.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/BinaryFile.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/BinaryFile.cpp.o
 .PHONY : BinaryFile.cpp.o
 
 BinaryFile.i: BinaryFile.cpp.i
@@ -187,7 +187,7 @@ BinaryFile.i: BinaryFile.cpp.i
 
 # target to preprocess a source file
 BinaryFile.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/BinaryFile.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/BinaryFile.cpp.i
 .PHONY : BinaryFile.cpp.i
 
 BinaryFile.s: BinaryFile.cpp.s
@@ -196,7 +196,7 @@ BinaryFile.s: BinaryFile.cpp.s
 
 # target to generate assembly for a file
 BinaryFile.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/BinaryFile.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/BinaryFile.cpp.s
 .PHONY : BinaryFile.cpp.s
 
 CoordinateInterval.o: CoordinateInterval.cpp.o
@@ -205,7 +205,7 @@ CoordinateInterval.o: CoordinateInterval.cpp.o
 
 # target to build an object file
 CoordinateInterval.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/CoordinateInterval.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/CoordinateInterval.cpp.o
 .PHONY : CoordinateInterval.cpp.o
 
 CoordinateInterval.i: CoordinateInterval.cpp.i
@@ -214,7 +214,7 @@ CoordinateInterval.i: CoordinateInterval.cpp.i
 
 # target to preprocess a source file
 CoordinateInterval.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/CoordinateInterval.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/CoordinateInterval.cpp.i
 .PHONY : CoordinateInterval.cpp.i
 
 CoordinateInterval.s: CoordinateInterval.cpp.s
@@ -223,7 +223,7 @@ CoordinateInterval.s: CoordinateInterval.cpp.s
 
 # target to generate assembly for a file
 CoordinateInterval.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/CoordinateInterval.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/CoordinateInterval.cpp.s
 .PHONY : CoordinateInterval.cpp.s
 
 DisjointRegions.o: DisjointRegions.cpp.o
@@ -232,7 +232,7 @@ DisjointRegions.o: DisjointRegions.cpp.o
 
 # target to build an object file
 DisjointRegions.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/DisjointRegions.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/DisjointRegions.cpp.o
 .PHONY : DisjointRegions.cpp.o
 
 DisjointRegions.i: DisjointRegions.cpp.i
@@ -241,7 +241,7 @@ DisjointRegions.i: DisjointRegions.cpp.i
 
 # target to preprocess a source file
 DisjointRegions.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/DisjointRegions.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/DisjointRegions.cpp.i
 .PHONY : DisjointRegions.cpp.i
 
 DisjointRegions.s: DisjointRegions.cpp.s
@@ -250,7 +250,7 @@ DisjointRegions.s: DisjointRegions.cpp.s
 
 # target to generate assembly for a file
 DisjointRegions.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/DisjointRegions.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/DisjointRegions.cpp.s
 .PHONY : DisjointRegions.cpp.s
 
 DuplicatePoints.o: DuplicatePoints.cpp.o
@@ -259,7 +259,7 @@ DuplicatePoints.o: DuplicatePoints.cpp.o
 
 # target to build an object file
 DuplicatePoints.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/DuplicatePoints.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/DuplicatePoints.cpp.o
 .PHONY : DuplicatePoints.cpp.o
 
 DuplicatePoints.i: DuplicatePoints.cpp.i
@@ -268,7 +268,7 @@ DuplicatePoints.i: DuplicatePoints.cpp.i
 
 # target to preprocess a source file
 DuplicatePoints.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/DuplicatePoints.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/DuplicatePoints.cpp.i
 .PHONY : DuplicatePoints.cpp.i
 
 DuplicatePoints.s: DuplicatePoints.cpp.s
@@ -277,7 +277,7 @@ DuplicatePoints.s: DuplicatePoints.cpp.s
 
 # target to generate assembly for a file
 DuplicatePoints.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/DuplicatePoints.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/DuplicatePoints.cpp.s
 .PHONY : DuplicatePoints.cpp.s
 
 Geometry3D.o: Geometry3D.cpp.o
@@ -286,7 +286,7 @@ Geometry3D.o: Geometry3D.cpp.o
 
 # target to build an object file
 Geometry3D.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/Geometry3D.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/Geometry3D.cpp.o
 .PHONY : Geometry3D.cpp.o
 
 Geometry3D.i: Geometry3D.cpp.i
@@ -295,7 +295,7 @@ Geometry3D.i: Geometry3D.cpp.i
 
 # target to preprocess a source file
 Geometry3D.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/Geometry3D.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/Geometry3D.cpp.i
 .PHONY : Geometry3D.cpp.i
 
 Geometry3D.s: Geometry3D.cpp.s
@@ -304,7 +304,7 @@ Geometry3D.s: Geometry3D.cpp.s
 
 # target to generate assembly for a file
 Geometry3D.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/Geometry3D.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/Geometry3D.cpp.s
 .PHONY : Geometry3D.cpp.s
 
 GridBase.o: GridBase.cpp.o
@@ -313,7 +313,7 @@ GridBase.o: GridBase.cpp.o
 
 # target to build an object file
 GridBase.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/GridBase.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/GridBase.cpp.o
 .PHONY : GridBase.cpp.o
 
 GridBase.i: GridBase.cpp.i
@@ -322,7 +322,7 @@ GridBase.i: GridBase.cpp.i
 
 # target to preprocess a source file
 GridBase.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/GridBase.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/GridBase.cpp.i
 .PHONY : GridBase.cpp.i
 
 GridBase.s: GridBase.cpp.s
@@ -331,7 +331,7 @@ GridBase.s: GridBase.cpp.s
 
 # target to generate assembly for a file
 GridBase.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/GridBase.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/GridBase.cpp.s
 .PHONY : GridBase.cpp.s
 
 InterpolationRegion.o: InterpolationRegion.cpp.o
@@ -340,7 +340,7 @@ InterpolationRegion.o: InterpolationRegion.cpp.o
 
 # target to build an object file
 InterpolationRegion.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/InterpolationRegion.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/InterpolationRegion.cpp.o
 .PHONY : InterpolationRegion.cpp.o
 
 InterpolationRegion.i: InterpolationRegion.cpp.i
@@ -349,7 +349,7 @@ InterpolationRegion.i: InterpolationRegion.cpp.i
 
 # target to preprocess a source file
 InterpolationRegion.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/InterpolationRegion.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/InterpolationRegion.cpp.i
 .PHONY : InterpolationRegion.cpp.i
 
 InterpolationRegion.s: InterpolationRegion.cpp.s
@@ -358,7 +358,7 @@ InterpolationRegion.s: InterpolationRegion.cpp.s
 
 # target to generate assembly for a file
 InterpolationRegion.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/InterpolationRegion.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/InterpolationRegion.cpp.s
 .PHONY : InterpolationRegion.cpp.s
 
 LasDataFormat.o: LasDataFormat.cpp.o
@@ -367,7 +367,7 @@ LasDataFormat.o: LasDataFormat.cpp.o
 
 # target to build an object file
 LasDataFormat.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/LasDataFormat.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/LasDataFormat.cpp.o
 .PHONY : LasDataFormat.cpp.o
 
 LasDataFormat.i: LasDataFormat.cpp.i
@@ -376,7 +376,7 @@ LasDataFormat.i: LasDataFormat.cpp.i
 
 # target to preprocess a source file
 LasDataFormat.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/LasDataFormat.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/LasDataFormat.cpp.i
 .PHONY : LasDataFormat.cpp.i
 
 LasDataFormat.s: LasDataFormat.cpp.s
@@ -385,7 +385,7 @@ LasDataFormat.s: LasDataFormat.cpp.s
 
 # target to generate assembly for a file
 LasDataFormat.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/LasDataFormat.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/LasDataFormat.cpp.s
 .PHONY : LasDataFormat.cpp.s
 
 LasDataReader.o: LasDataReader.cpp.o
@@ -394,7 +394,7 @@ LasDataReader.o: LasDataReader.cpp.o
 
 # target to build an object file
 LasDataReader.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/LasDataReader.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/LasDataReader.cpp.o
 .PHONY : LasDataReader.cpp.o
 
 LasDataReader.i: LasDataReader.cpp.i
@@ -403,7 +403,7 @@ LasDataReader.i: LasDataReader.cpp.i
 
 # target to preprocess a source file
 LasDataReader.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/LasDataReader.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/LasDataReader.cpp.i
 .PHONY : LasDataReader.cpp.i
 
 LasDataReader.s: LasDataReader.cpp.s
@@ -412,7 +412,7 @@ LasDataReader.s: LasDataReader.cpp.s
 
 # target to generate assembly for a file
 LasDataReader.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/LasDataReader.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/LasDataReader.cpp.s
 .PHONY : LasDataReader.cpp.s
 
 LineIndent.o: LineIndent.cpp.o
@@ -421,7 +421,7 @@ LineIndent.o: LineIndent.cpp.o
 
 # target to build an object file
 LineIndent.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/LineIndent.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/LineIndent.cpp.o
 .PHONY : LineIndent.cpp.o
 
 LineIndent.i: LineIndent.cpp.i
@@ -430,7 +430,7 @@ LineIndent.i: LineIndent.cpp.i
 
 # target to preprocess a source file
 LineIndent.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/LineIndent.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/LineIndent.cpp.i
 .PHONY : LineIndent.cpp.i
 
 LineIndent.s: LineIndent.cpp.s
@@ -439,7 +439,7 @@ LineIndent.s: LineIndent.cpp.s
 
 # target to generate assembly for a file
 LineIndent.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/LineIndent.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/LineIndent.cpp.s
 .PHONY : LineIndent.cpp.s
 
 LocaleUtilities.o: LocaleUtilities.cpp.o
@@ -448,7 +448,7 @@ LocaleUtilities.o: LocaleUtilities.cpp.o
 
 # target to build an object file
 LocaleUtilities.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/LocaleUtilities.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/LocaleUtilities.cpp.o
 .PHONY : LocaleUtilities.cpp.o
 
 LocaleUtilities.i: LocaleUtilities.cpp.i
@@ -457,7 +457,7 @@ LocaleUtilities.i: LocaleUtilities.cpp.i
 
 # target to preprocess a source file
 LocaleUtilities.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/LocaleUtilities.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/LocaleUtilities.cpp.i
 .PHONY : LocaleUtilities.cpp.i
 
 LocaleUtilities.s: LocaleUtilities.cpp.s
@@ -466,7 +466,7 @@ LocaleUtilities.s: LocaleUtilities.cpp.s
 
 # target to generate assembly for a file
 LocaleUtilities.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/LocaleUtilities.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/LocaleUtilities.cpp.s
 .PHONY : LocaleUtilities.cpp.s
 
 OutputCsvFile.o: OutputCsvFile.cpp.o
@@ -475,7 +475,7 @@ OutputCsvFile.o: OutputCsvFile.cpp.o
 
 # target to build an object file
 OutputCsvFile.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/OutputCsvFile.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/OutputCsvFile.cpp.o
 .PHONY : OutputCsvFile.cpp.o
 
 OutputCsvFile.i: OutputCsvFile.cpp.i
@@ -484,7 +484,7 @@ OutputCsvFile.i: OutputCsvFile.cpp.i
 
 # target to preprocess a source file
 OutputCsvFile.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/OutputCsvFile.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/OutputCsvFile.cpp.i
 .PHONY : OutputCsvFile.cpp.i
 
 OutputCsvFile.s: OutputCsvFile.cpp.s
@@ -493,7 +493,7 @@ OutputCsvFile.s: OutputCsvFile.cpp.s
 
 # target to generate assembly for a file
 OutputCsvFile.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/OutputCsvFile.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/OutputCsvFile.cpp.s
 .PHONY : OutputCsvFile.cpp.s
 
 PointCanopyHeightFile.o: PointCanopyHeightFile.cpp.o
@@ -502,7 +502,7 @@ PointCanopyHeightFile.o: PointCanopyHeightFile.cpp.o
 
 # target to build an object file
 PointCanopyHeightFile.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/PointCanopyHeightFile.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/PointCanopyHeightFile.cpp.o
 .PHONY : PointCanopyHeightFile.cpp.o
 
 PointCanopyHeightFile.i: PointCanopyHeightFile.cpp.i
@@ -511,7 +511,7 @@ PointCanopyHeightFile.i: PointCanopyHeightFile.cpp.i
 
 # target to preprocess a source file
 PointCanopyHeightFile.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/PointCanopyHeightFile.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/PointCanopyHeightFile.cpp.i
 .PHONY : PointCanopyHeightFile.cpp.i
 
 PointCanopyHeightFile.s: PointCanopyHeightFile.cpp.s
@@ -520,7 +520,7 @@ PointCanopyHeightFile.s: PointCanopyHeightFile.cpp.s
 
 # target to generate assembly for a file
 PointCanopyHeightFile.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/PointCanopyHeightFile.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/PointCanopyHeightFile.cpp.s
 .PHONY : PointCanopyHeightFile.cpp.s
 
 PointCsvFile.o: PointCsvFile.cpp.o
@@ -529,7 +529,7 @@ PointCsvFile.o: PointCsvFile.cpp.o
 
 # target to build an object file
 PointCsvFile.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/PointCsvFile.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/PointCsvFile.cpp.o
 .PHONY : PointCsvFile.cpp.o
 
 PointCsvFile.i: PointCsvFile.cpp.i
@@ -538,7 +538,7 @@ PointCsvFile.i: PointCsvFile.cpp.i
 
 # target to preprocess a source file
 PointCsvFile.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/PointCsvFile.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/PointCsvFile.cpp.i
 .PHONY : PointCsvFile.cpp.i
 
 PointCsvFile.s: PointCsvFile.cpp.s
@@ -547,7 +547,7 @@ PointCsvFile.s: PointCsvFile.cpp.s
 
 # target to generate assembly for a file
 PointCsvFile.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/PointCsvFile.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/PointCsvFile.cpp.s
 .PHONY : PointCsvFile.cpp.s
 
 PointIO.o: PointIO.cpp.o
@@ -556,7 +556,7 @@ PointIO.o: PointIO.cpp.o
 
 # target to build an object file
 PointIO.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/PointIO.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/PointIO.cpp.o
 .PHONY : PointIO.cpp.o
 
 PointIO.i: PointIO.cpp.i
@@ -565,7 +565,7 @@ PointIO.i: PointIO.cpp.i
 
 # target to preprocess a source file
 PointIO.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/PointIO.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/PointIO.cpp.i
 .PHONY : PointIO.cpp.i
 
 PointIO.s: PointIO.cpp.s
@@ -574,7 +574,7 @@ PointIO.s: PointIO.cpp.s
 
 # target to generate assembly for a file
 PointIO.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/PointIO.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/PointIO.cpp.s
 .PHONY : PointIO.cpp.s
 
 PointVector.o: PointVector.cpp.o
@@ -583,7 +583,7 @@ PointVector.o: PointVector.cpp.o
 
 # target to build an object file
 PointVector.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/PointVector.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/PointVector.cpp.o
 .PHONY : PointVector.cpp.o
 
 PointVector.i: PointVector.cpp.i
@@ -592,7 +592,7 @@ PointVector.i: PointVector.cpp.i
 
 # target to preprocess a source file
 PointVector.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/PointVector.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/PointVector.cpp.i
 .PHONY : PointVector.cpp.i
 
 PointVector.s: PointVector.cpp.s
@@ -601,7 +601,7 @@ PointVector.s: PointVector.cpp.s
 
 # target to generate assembly for a file
 PointVector.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/PointVector.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/PointVector.cpp.s
 .PHONY : PointVector.cpp.s
 
 ProgramParameters.o: ProgramParameters.cpp.o
@@ -610,7 +610,7 @@ ProgramParameters.o: ProgramParameters.cpp.o
 
 # target to build an object file
 ProgramParameters.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/ProgramParameters.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/ProgramParameters.cpp.o
 .PHONY : ProgramParameters.cpp.o
 
 ProgramParameters.i: ProgramParameters.cpp.i
@@ -619,7 +619,7 @@ ProgramParameters.i: ProgramParameters.cpp.i
 
 # target to preprocess a source file
 ProgramParameters.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/ProgramParameters.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/ProgramParameters.cpp.i
 .PHONY : ProgramParameters.cpp.i
 
 ProgramParameters.s: ProgramParameters.cpp.s
@@ -628,7 +628,7 @@ ProgramParameters.s: ProgramParameters.cpp.s
 
 # target to generate assembly for a file
 ProgramParameters.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/ProgramParameters.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/ProgramParameters.cpp.s
 .PHONY : ProgramParameters.cpp.s
 
 ProgressBar.o: ProgressBar.cpp.o
@@ -637,7 +637,7 @@ ProgressBar.o: ProgressBar.cpp.o
 
 # target to build an object file
 ProgressBar.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/ProgressBar.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/ProgressBar.cpp.o
 .PHONY : ProgressBar.cpp.o
 
 ProgressBar.i: ProgressBar.cpp.i
@@ -646,7 +646,7 @@ ProgressBar.i: ProgressBar.cpp.i
 
 # target to preprocess a source file
 ProgressBar.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/ProgressBar.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/ProgressBar.cpp.i
 .PHONY : ProgressBar.cpp.i
 
 ProgressBar.s: ProgressBar.cpp.s
@@ -655,7 +655,7 @@ ProgressBar.s: ProgressBar.cpp.s
 
 # target to generate assembly for a file
 ProgressBar.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/ProgressBar.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/ProgressBar.cpp.s
 .PHONY : ProgressBar.cpp.s
 
 RasterSurface.o: RasterSurface.cpp.o
@@ -664,7 +664,7 @@ RasterSurface.o: RasterSurface.cpp.o
 
 # target to build an object file
 RasterSurface.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/RasterSurface.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/RasterSurface.cpp.o
 .PHONY : RasterSurface.cpp.o
 
 RasterSurface.i: RasterSurface.cpp.i
@@ -673,7 +673,7 @@ RasterSurface.i: RasterSurface.cpp.i
 
 # target to preprocess a source file
 RasterSurface.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/RasterSurface.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/RasterSurface.cpp.i
 .PHONY : RasterSurface.cpp.i
 
 RasterSurface.s: RasterSurface.cpp.s
@@ -682,7 +682,7 @@ RasterSurface.s: RasterSurface.cpp.s
 
 # target to generate assembly for a file
 RasterSurface.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/RasterSurface.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/RasterSurface.cpp.s
 .PHONY : RasterSurface.cpp.s
 
 RegularizedSpline.o: RegularizedSpline.cpp.o
@@ -691,7 +691,7 @@ RegularizedSpline.o: RegularizedSpline.cpp.o
 
 # target to build an object file
 RegularizedSpline.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/RegularizedSpline.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/RegularizedSpline.cpp.o
 .PHONY : RegularizedSpline.cpp.o
 
 RegularizedSpline.i: RegularizedSpline.cpp.i
@@ -700,7 +700,7 @@ RegularizedSpline.i: RegularizedSpline.cpp.i
 
 # target to preprocess a source file
 RegularizedSpline.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/RegularizedSpline.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/RegularizedSpline.cpp.i
 .PHONY : RegularizedSpline.cpp.i
 
 RegularizedSpline.s: RegularizedSpline.cpp.s
@@ -709,7 +709,7 @@ RegularizedSpline.s: RegularizedSpline.cpp.s
 
 # target to generate assembly for a file
 RegularizedSpline.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/RegularizedSpline.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/RegularizedSpline.cpp.s
 .PHONY : RegularizedSpline.cpp.s
 
 StackedPoints.o: StackedPoints.cpp.o
@@ -718,7 +718,7 @@ StackedPoints.o: StackedPoints.cpp.o
 
 # target to build an object file
 StackedPoints.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/StackedPoints.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/StackedPoints.cpp.o
 .PHONY : StackedPoints.cpp.o
 
 StackedPoints.i: StackedPoints.cpp.i
@@ -727,7 +727,7 @@ StackedPoints.i: StackedPoints.cpp.i
 
 # target to preprocess a source file
 StackedPoints.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/StackedPoints.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/StackedPoints.cpp.i
 .PHONY : StackedPoints.cpp.i
 
 StackedPoints.s: StackedPoints.cpp.s
@@ -736,7 +736,7 @@ StackedPoints.s: StackedPoints.cpp.s
 
 # target to generate assembly for a file
 StackedPoints.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/StackedPoints.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/StackedPoints.cpp.s
 .PHONY : StackedPoints.cpp.s
 
 SurfaceInterpolation.o: SurfaceInterpolation.cpp.o
@@ -745,7 +745,7 @@ SurfaceInterpolation.o: SurfaceInterpolation.cpp.o
 
 # target to build an object file
 SurfaceInterpolation.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/SurfaceInterpolation.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/SurfaceInterpolation.cpp.o
 .PHONY : SurfaceInterpolation.cpp.o
 
 SurfaceInterpolation.i: SurfaceInterpolation.cpp.i
@@ -754,7 +754,7 @@ SurfaceInterpolation.i: SurfaceInterpolation.cpp.i
 
 # target to preprocess a source file
 SurfaceInterpolation.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/SurfaceInterpolation.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/SurfaceInterpolation.cpp.i
 .PHONY : SurfaceInterpolation.cpp.i
 
 SurfaceInterpolation.s: SurfaceInterpolation.cpp.s
@@ -763,7 +763,7 @@ SurfaceInterpolation.s: SurfaceInterpolation.cpp.s
 
 # target to generate assembly for a file
 SurfaceInterpolation.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/SurfaceInterpolation.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/SurfaceInterpolation.cpp.s
 .PHONY : SurfaceInterpolation.cpp.s
 
 UnclassifiedPoints.o: UnclassifiedPoints.cpp.o
@@ -772,7 +772,7 @@ UnclassifiedPoints.o: UnclassifiedPoints.cpp.o
 
 # target to build an object file
 UnclassifiedPoints.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/UnclassifiedPoints.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/UnclassifiedPoints.cpp.o
 .PHONY : UnclassifiedPoints.cpp.o
 
 UnclassifiedPoints.i: UnclassifiedPoints.cpp.i
@@ -781,7 +781,7 @@ UnclassifiedPoints.i: UnclassifiedPoints.cpp.i
 
 # target to preprocess a source file
 UnclassifiedPoints.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/UnclassifiedPoints.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/UnclassifiedPoints.cpp.i
 .PHONY : UnclassifiedPoints.cpp.i
 
 UnclassifiedPoints.s: UnclassifiedPoints.cpp.s
@@ -790,7 +790,7 @@ UnclassifiedPoints.s: UnclassifiedPoints.cpp.s
 
 # target to generate assembly for a file
 UnclassifiedPoints.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/UnclassifiedPoints.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/UnclassifiedPoints.cpp.s
 .PHONY : UnclassifiedPoints.cpp.s
 
 Win32StructuredException.o: Win32StructuredException.cpp.o
@@ -799,7 +799,7 @@ Win32StructuredException.o: Win32StructuredException.cpp.o
 
 # target to build an object file
 Win32StructuredException.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/Win32StructuredException.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/Win32StructuredException.cpp.o
 .PHONY : Win32StructuredException.cpp.o
 
 Win32StructuredException.i: Win32StructuredException.cpp.i
@@ -808,7 +808,7 @@ Win32StructuredException.i: Win32StructuredException.cpp.i
 
 # target to preprocess a source file
 Win32StructuredException.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/Win32StructuredException.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/Win32StructuredException.cpp.i
 .PHONY : Win32StructuredException.cpp.i
 
 Win32StructuredException.s: Win32StructuredException.cpp.s
@@ -817,7 +817,7 @@ Win32StructuredException.s: Win32StructuredException.cpp.s
 
 # target to generate assembly for a file
 Win32StructuredException.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/Win32StructuredException.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/Win32StructuredException.cpp.s
 .PHONY : Win32StructuredException.cpp.s
 
 src/mcc.o: src/mcc.cpp.o
@@ -826,7 +826,7 @@ src/mcc.o: src/mcc.cpp.o
 
 # target to build an object file
 src/mcc.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/src/mcc.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/src/mcc.cpp.o
 .PHONY : src/mcc.cpp.o
 
 src/mcc.i: src/mcc.cpp.i
@@ -835,7 +835,7 @@ src/mcc.i: src/mcc.cpp.i
 
 # target to preprocess a source file
 src/mcc.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/src/mcc.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/src/mcc.cpp.i
 .PHONY : src/mcc.cpp.i
 
 src/mcc.s: src/mcc.cpp.s
@@ -844,7 +844,7 @@ src/mcc.s: src/mcc.cpp.s
 
 # target to generate assembly for a file
 src/mcc.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/src/mcc.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/src/mcc.cpp.s
 .PHONY : src/mcc.cpp.s
 
 tpsdemo/spline.o: tpsdemo/spline.cpp.o
@@ -853,7 +853,7 @@ tpsdemo/spline.o: tpsdemo/spline.cpp.o
 
 # target to build an object file
 tpsdemo/spline.cpp.o:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/tpsdemo/spline.cpp.o
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/tpsdemo/spline.cpp.o
 .PHONY : tpsdemo/spline.cpp.o
 
 tpsdemo/spline.i: tpsdemo/spline.cpp.i
@@ -862,7 +862,7 @@ tpsdemo/spline.i: tpsdemo/spline.cpp.i
 
 # target to preprocess a source file
 tpsdemo/spline.cpp.i:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/tpsdemo/spline.cpp.i
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/tpsdemo/spline.cpp.i
 .PHONY : tpsdemo/spline.cpp.i
 
 tpsdemo/spline.s: tpsdemo/spline.cpp.s
@@ -871,7 +871,7 @@ tpsdemo/spline.s: tpsdemo/spline.cpp.s
 
 # target to generate assembly for a file
 tpsdemo/spline.cpp.s:
-	$(MAKE) -f CMakeFiles/mcc-lidar.dir/build.make CMakeFiles/mcc-lidar.dir/tpsdemo/spline.cpp.s
+	$(MAKE) -f CMakeFiles/mcc.dir/build.make CMakeFiles/mcc.dir/tpsdemo/spline.cpp.s
 .PHONY : tpsdemo/spline.cpp.s
 
 # Help Target
@@ -880,11 +880,11 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
+	@echo "... package"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... package_source"
-	@echo "... package"
-	@echo "... mcc-lidar"
+	@echo "... mcc"
 	@echo "... Algorithm.o"
 	@echo "... Algorithm.i"
 	@echo "... Algorithm.s"
