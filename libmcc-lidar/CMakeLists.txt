@@ -2,24 +2,17 @@ cmake_minimum_required(VERSION 2.6)
 
 project (MCC_LIDAR CXX)
 
-set (VERSION 2.1)
-set (RELEASE "final")
-include (VersionRelease.cmake)
-
 #  Get the Subversion revision number for the project's source code.  The
 #  VersionControl.cmake file tests the variable WINDOWS for the Windows
 #  platform, so it needs to be set before including the file.
 if (WIN32)
   set (WINDOWS ${WIN32})
 endif()
-include (VersionControl.cmake)
-vcs_get_revision(PROJECT_WC_REVISION)
-message("Current Subversion revision is ${PROJECT_WC_REVISION}")
 
-set (CONFIG_HEADER ./config.h")
-configure_file (./config.h.in"
+set (CONFIG_HEADER "./config.h")
+configure_file ("./config.h.in"
                 "${CONFIG_HEADER}")
-include_directories (.)
+include_directories (".")
 include_directories ("./include")
 
 if (WIN32)
