@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
 
-add_subdirectory(./libmcc-ldar/)
+add_subdirectory(./libmcc-lidar/)
 add_subdirectory(./python/)
 
