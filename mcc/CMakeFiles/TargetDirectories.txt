@@ -1,9 +1,0 @@
-/home/hilley/repos/mcc/mcclidar-code-r198-trunk-src/CMakeFiles/install/strip.dir
-/home/hilley/repos/mcc/mcclidar-code-r198-trunk-src/CMakeFiles/install.dir
-/home/hilley/repos/mcc/mcclidar-code-r198-trunk-src/CMakeFiles/package.dir
-/home/hilley/repos/mcc/mcclidar-code-r198-trunk-src/CMakeFiles/package_source.dir
-/home/hilley/repos/mcc/mcclidar-code-r198-trunk-src/CMakeFiles/install/local.dir
-/home/hilley/repos/mcc/mcclidar-code-r198-trunk-src/CMakeFiles/mcc-lidar.dir
-/home/hilley/repos/mcc/mcclidar-code-r198-trunk-src/CMakeFiles/edit_cache.dir
-/home/hilley/repos/mcc/mcclidar-code-r198-trunk-src/CMakeFiles/rebuild_cache.dir
-/home/hilley/repos/mcc/mcclidar-code-r198-trunk-src/CMakeFiles/list_install_components.dir

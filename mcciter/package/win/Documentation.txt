@@ -1,8 +1,0 @@
-MCC-LIDAR @VERSION_RELEASE@
-
-To run the program, start the MCC-LIDAR Command Prompt, and then type
-"mcc-lidar" at the prompt.  To print information about the parameters
-and switches (also known as "options") that the program accepts on the
-command line, use the --help switch:
-
-  mcc-lidar --help
