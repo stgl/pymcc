@@ -70,21 +70,30 @@ namespace mcc
     convergencePercent[3] = 0.0001;  // 0.01%
 
     // points not yet classified
+
+    std::vector<IPoint *> pointsForSpline(n);
+    std::vector<IPoint *>::size_type i = 0;
+    BOOST_FOREACH(IPoint & pt, points) {
+          pointsForSpline[i] = &pt;
+          ++i;
+    }
+
     IUnclassifiedPoints & U = points;
+    IUnclassifiedPoints & Uspline = pointsForSpline;
 
     // Locate points that are vertically stacked (at same x,y coordinates), and
     // within each stack, classify all points but the lowest one as non-ground.
     std::cout << "Searching for points with the same x,y coordinates..." << std::endl;
     std::vector<IPoint *> unclassifiedDuplicates;
-    StackedPoints::classifyPointsAtSameXY(points, unclassifiedDuplicates);
-    int nClassified = points.removeClassified();
+    StackedPoints::classifyPointsAtSameXY(pointsForSpline, unclassifiedDuplicates);
+    int nClassified = pointsForSpline.removeClassified();
     std::cout << "  " << nClassified << " points classified as non-ground" << std::endl;
 
     DuplicatePoints duplicatePoints(unclassifiedDuplicates);
     std::string pluralEnding = (duplicatePoints.setCount() == 1) ? "" : "s";
     std::cout << "Identified " << duplicatePoints.setCount() << " set" << pluralEnding << " of unclassified duplicate points" << std::endl;
     int nDuplicatesPutAside = duplicatePoints.putAsideAllButOnePointPerSet();
-    nDuplicatesPutAside = points.removeClassified();
+    nDuplicatesPutAside = pointsForSpline.removeClassified();
 
     LineIndent indent("  ");
 
@@ -105,8 +114,8 @@ namespace mcc
           break;
         }
         std::cout << "SD " << SD << " - Pass " << pass << std::endl
-                  << indent << "Interpolating " << U.count() << " points:" << std::endl;
-        boost::shared_ptr<IRasterSurface> rasterSurface = surfaceInterpolation_(U, CR[SD], tension);
+                  << indent << "Interpolating " << Uspline.count() << " points:" << std::endl;
+        boost::shared_ptr<IRasterSurface> rasterSurface = surfaceInterpolation_(Uspline, CR[SD], tension);
 
         std::cout << indent << "Averaging raster surface..." << std::endl;
         rasterSurface->average(3);  // kernel = 3x3
@@ -171,21 +180,28 @@ namespace mcc
   {
 
     // points not yet classified
+	std::vector<IPoint *> pointsForSpline(n);
+	std::vector<IPoint *>::size_type i = 0;
+	BOOST_FOREACH(IPoint & pt, points) {
+		  pointsForSpline[i] = &pt;
+		  ++i;
+	}
     IUnclassifiedPoints & U = points;
+    IUnclassifiedPoints & Uspline = pointsForSpline;
 
     // Locate points that are vertically stacked (at same x,y coordinates), and
     // within each stack, classify all points but the lowest one as non-ground.
     std::cout << "Searching for points with the same x,y coordinates..." << std::endl;
     std::vector<IPoint *> unclassifiedDuplicates;
     StackedPoints::classifyPointsAtSameXY(points, unclassifiedDuplicates);
-    int nClassified = points.removeClassified();
+    int nClassified = pointsForSpline.removeClassified();
     std::cout << "  " << nClassified << " points classified as non-ground" << std::endl;
 
     DuplicatePoints duplicatePoints(unclassifiedDuplicates);
     std::string pluralEnding = (duplicatePoints.setCount() == 1) ? "" : "s";
     std::cout << "Identified " << duplicatePoints.setCount() << " set" << pluralEnding << " of unclassified duplicate points" << std::endl;
     int nDuplicatesPutAside = duplicatePoints.putAsideAllButOnePointPerSet();
-    nDuplicatesPutAside = points.removeClassified();
+    nDuplicatesPutAside = pointsForSpline.removeClassified();
 
 
     LineIndent indent("  ");
@@ -193,8 +209,8 @@ namespace mcc
 
     std::cout << "Scale domain: " << scaleDomainSpacing << std::endl;
 
-    std::cout << "Interpolating " << U.count() << " points:" << std::endl;
-    boost::shared_ptr<IRasterSurface> rasterSurface = surfaceInterpolation_(U, scaleDomainSpacing, tension);
+    std::cout << "Interpolating " << Uspline.count() << " points:" << std::endl;
+    boost::shared_ptr<IRasterSurface> rasterSurface = surfaceInterpolation_(Uspline, scaleDomainSpacing, tension);
 
     std::cout << indent << "Averaging raster surface..." << std::endl;
     rasterSurface->average(3);  // kernel = 3x3
