@@ -19,6 +19,7 @@ namespace mcc
 {
   class ISurfaceInterpolation;
   class IUnclassifiedPoints;
+  class UnclassifiedPoints;
 
   class Algorithm
   {
@@ -26,10 +27,10 @@ namespace mcc
       Algorithm(ISurfaceInterpolation & surfaceInterpolation,
                 bool                    writeNongroundPts,
                 bool                    writeRasterSurfaces);
-      void classifyPoints(IUnclassifiedPoints & points,
+      void classifyPoints(UnclassifiedPoints & points,
                           double                scaleDomain2Spacing,
                           double                curvatureThreshold);
-      void labelPointsUsingPass(IUnclassifiedPoints & points,
+      void labelPointsUsingPass(UnclassifiedPoints & points,
 			  double 		scaleDomainSpacing);
 
       static const double tension;  // parameter "f" in MCC paper

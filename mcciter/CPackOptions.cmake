@@ -10,6 +10,6 @@ if (CPACK_GENERATOR MATCHES "NSIS")
   #  For the next two variables to work with CPack and NSIS, the
   #  PROJECT_SOURCE_DIR variable must have no spaces, and the final path
   #  separator must be the Windows backslash.
-  set (CPACK_NSIS_CREATE_ICONS_EXTRA   "!include /home/hilley/repos/mcc/mcclidar-code-r198-trunk-src/package/win\\create_shortcut.nsh")
-  set (CPACK_NSIS_DELETE_ICONS_EXTRA   "!include /home/hilley/repos/mcc/mcclidar-code-r198-trunk-src/package/win\\delete_shortcut.nsh")
+  set (CPACK_NSIS_CREATE_ICONS_EXTRA   "!include /homedirs/hilley/pymcc/mcciter/package/win\\create_shortcut.nsh")
+  set (CPACK_NSIS_DELETE_ICONS_EXTRA   "!include /homedirs/hilley/pymcc/mcciter/package/win\\delete_shortcut.nsh")
 endif()

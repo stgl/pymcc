@@ -55,6 +55,16 @@ namespace mcc
     }
   }
 
+  UnclassifiedPoints::UnclassifiedPoints(const UnclassifiedPoints &pts) 
+    : points_(pts.points_), unclassifiedPoints_(pts.count()) {
+
+    PointVector & ptss = *(pts.points_);
+    for (IPointVector::size_type i = 0; i < ptss.count(); ++i) {
+      unclassifiedPoints_[i] = &(ptss[i]);
+    }
+
+  }
+
   //-------------------------------------------------------------------------
 
   IPointVector::size_type UnclassifiedPoints::count() const
