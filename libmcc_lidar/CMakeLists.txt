@@ -86,7 +86,7 @@ endif(USE_OPENMP)
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "lib")
 
-set (PROGRAM_NAME mcc-lidar)
+set (PROGRAM_NAME mcc_lidar)
 add_library (${PROGRAM_NAME} STATIC ${SRC_FILES} ${HDR_FILES} ${TPSDEMO_SRCS})
 target_link_libraries (${PROGRAM_NAME}
                        ${Boost_FILESYSTEM_LIBRARY}
