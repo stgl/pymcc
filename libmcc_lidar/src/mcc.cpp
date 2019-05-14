@@ -29,11 +29,12 @@ shared_ptr<PointVector> readPoints(double *x,
 
 	for(int i=0; i < n; i++) {
 
-		(*pts)[i].setCoordinates(XyzPoint(x[n], y[n], z[n]));
-		xyExtent.minX = (std::isnan(xyExtent.minX) | (x[n] < xyExtent.minX)) ? x[n] : xyExtent.minX;
-		xyExtent.maxX = (std::isnan(xyExtent.maxX) | (x[n] > xyExtent.maxX)) ? x[n] : xyExtent.maxX;
-		xyExtent.minY = (std::isnan(xyExtent.minY) | (y[n] < xyExtent.minY)) ? y[n] : xyExtent.minY;
-		xyExtent.maxY = (std::isnan(xyExtent.maxY) | (y[n] > xyExtent.maxY)) ? y[n] : xyExtent.maxY;
+		(*pts)[i].setCoordinates(XyzPoint(x[i], y[i], z[i]));
+
+		xyExtent.minX = (std::isnan(xyExtent.minX) | (x[i] < xyExtent.minX)) ? x[i] : xyExtent.minX;
+		xyExtent.maxX = (std::isnan(xyExtent.maxX) | (x[i] > xyExtent.maxX)) ? x[i] : xyExtent.maxX;
+		xyExtent.minY = (std::isnan(xyExtent.minY) | (y[i] < xyExtent.minY)) ? y[i] : xyExtent.minY;
+		xyExtent.maxY = (std::isnan(xyExtent.maxY) | (y[i] > xyExtent.maxY)) ? y[i] : xyExtent.maxY;
 	}
 
 	return pts;

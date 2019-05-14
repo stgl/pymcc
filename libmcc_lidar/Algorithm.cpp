@@ -73,8 +73,8 @@ namespace mcc
 
     // points not yet classified
 
-    UnclassifiedPoints splinePoints(points);
     IUnclassifiedPoints & U = points;
+    UnclassifiedPoints splinePoints(points);
 
     // Locate points that are vertically stacked (at same x,y coordinates), and
     // within each stack, classify all points but the lowest one as non-ground.
