@@ -63,7 +63,7 @@ class cmake_build_ext(build_ext):
         print()  # Add an empty line for cleaner output
 
 
-setup(name = "pymcc-lidar",
+setup(name = "pymcc_lidar",
       version = "1.0",
       ext_modules = [CMakeExtension("pymcc-lidar")],
       cmdclass = {'build_ext': cmake_build_ext,

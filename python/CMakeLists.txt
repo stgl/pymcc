@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(pyicp)
+project(pymcc-lidar)
 
 find_package(PythonInterp)
 find_package(PythonLibs)
@@ -17,7 +17,7 @@ include_directories("${BOOST_DIR}")
 include_directories("${PYTHON_NUMPY_INCLUDE_DIR}")
 include_directories("./")
 
-set_source_files_properties(pymcc-lidar.pyx PROPERTIES CYTHON_IS_CXX 1)
-cython_add_module(pymcc-lidar pymcc-lidar.pyx pymccp.cpp)
+set_source_files_properties(pymcc_lidar.pyx PROPERTIES CYTHON_IS_CXX 1)
+cython_add_module(pymcc-lidar pymcc_lidar.pyx pymccp.cpp)
 target_link_libraries(pymcc-lidar mcc-lidar)
 
