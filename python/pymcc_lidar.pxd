@@ -1,4 +1,4 @@
-# pymcc.pxd
+# pymcc_lidar.pxd
 
 cdef extern from "pymccp.h" nogil:
     ctypedef signed int int32_t;
