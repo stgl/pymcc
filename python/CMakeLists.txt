@@ -19,5 +19,5 @@ include_directories("./")
 
 set_source_files_properties(pymcc_lidar.pyx PROPERTIES CYTHON_IS_CXX 1)
 cython_add_module(pymcc_lidar pymcc_lidar.pyx pymccp.cpp)
-target_link_libraries(pymcc_lidar MCC_LIDAR)
+target_link_libraries(pymcc_lidar mcc_lidar)
 
