@@ -3,7 +3,7 @@ cimport pymcc_lidar
 cimport numpy as np
 from libc.stdlib cimport malloc, free
 
-def pymcc_classification(np.ndarray[double, ndim = 2, mode = 'c'] xyz not None, scaleDomain2Spacing not None, curvatureThreshold not None):
+def classify(np.ndarray[double, ndim = 2, mode = 'c'] xyz not None, scaleDomain2Spacing not None, curvatureThreshold not None):
 
   m_xyz = xyz.shape[0]
   n_xyz = xyz.shape[1]
@@ -22,8 +22,6 @@ def pymcc_classification(np.ndarray[double, ndim = 2, mode = 'c'] xyz not None, 
       x[i] = xyz[i, 0]
       y[i] = xyz[i, 1]
       z[i] = xyz[i, 2]
-      
-  
   
   with nogil: 
     classification = pymcc_classify(x, y, z, n, resolution, thresh);
@@ -34,7 +32,7 @@ def pymcc_classification(np.ndarray[double, ndim = 2, mode = 'c'] xyz not None, 
   
   return np_classification
   
-def pymcc_singlepass(np.ndarray[double, ndim = 2, mode = 'c'] xyz not None, scaleDomainSpacing not None):
+def calculate_excess_height(np.ndarray[double, ndim = 2, mode = 'c'] xyz not None, scaleDomainSpacing not None):
   
   m_xyz = xyz.shape[0]
   n_xyz = xyz.shape[1]
@@ -63,5 +61,3 @@ def pymcc_singlepass(np.ndarray[double, ndim = 2, mode = 'c'] xyz not None, scal
   free(y);
   free(z);
   return np_h
-
-
