@@ -67,4 +67,4 @@ def calculate_excess_height(np.ndarray[double, ndim=2, mode='c'] xyz not None,
     free(y);
     free(z);
 
-  return np_h
+    return np_h
