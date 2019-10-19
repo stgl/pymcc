@@ -38,7 +38,7 @@ namespace mcc
                        bool                    writeRasterSurfaces)
     : surfaceInterpolation_(surfaceInterpolation),
       writeNongroundPts_(writeNongroundPts),
-      writeRasterSurfaces_(writeRasterSurfaces),
+      writeRasterSurfaces_(writeRasterSurfaces)
   {
   }
 
