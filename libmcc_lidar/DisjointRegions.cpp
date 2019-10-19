@@ -200,8 +200,7 @@ namespace mcc
 
   int DisjointRegions::subdivide(const IPointVector &  points,
                                  PointSelector         pointSelector,
-                                 const RasterSurface & raster
-                                 const float densityScaleFactor)
+                                 const RasterSurface & raster)
   {
     // Subdivide the raster's area into non-overlapping regions.  The goal is
     // to have approximately the same # of points in each region.
