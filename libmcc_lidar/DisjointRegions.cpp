@@ -205,7 +205,7 @@ namespace mcc
     // Subdivide the raster's area into non-overlapping regions.  The goal is
     // to have approximately the same # of points in each region.
 
-    int desiredPtsPerRegionWithScale = round(scaleFactor_ *  desiredPtsPerRegion);
+    int desiredPtsPerRegionWithScale = round(pointDensityScaleFactor_ *  desiredPtsPerRegion);
     int desiredNumRegions = points.count() / desiredPtsPerRegionWithScale;
       // Rounding down because one less region means possibly more pts per
       // region.
@@ -389,7 +389,7 @@ namespace mcc
     nPointsLeftInOuterRing = 0;
 
     unsigned int nSelectedPts = currentRegion->pts.size();
-    int desiredPtsPerRegionWithScale = round(scaleFactor_ *  desiredPtsPerRegion);
+    int desiredPtsPerRegionWithScale = round(pointDensityScaleFactor_ *  desiredPtsPerRegion);
     if (nSelectedPts < desiredPtsPerRegionWithScale) {
       addNeighborPointsToCurrentRegion(desiredPtsPerRegionWithScale - nSelectedPts);
     }
