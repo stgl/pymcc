@@ -199,7 +199,7 @@ namespace mcc
     std::cout << "Scale domain: " << scaleDomainSpacing << std::endl;
 
     std::cout << "Interpolating " << splinePoints.count() << " points:" << std::endl;
-    boost::shared_ptr<IRasterSurface> rasterSurface = surfaceInterpolation_(splinePoints, scaleDomainSpacing, tension, pointDensityScaleFactor_);
+    boost::shared_ptr<IRasterSurface> rasterSurface = surfaceInterpolation_(splinePoints, scaleDomainSpacing, tension);
 
     std::cout << indent << "Averaging raster surface..." << std::endl;
     rasterSurface->average(3);  // kernel = 3x3
