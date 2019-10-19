@@ -45,10 +45,10 @@ uint8_t * mcc_classify(double *x, double *y, double *z, int n, double scaleDomai
 	XyExtent xyExtent;
 	shared_ptr<PointVector> points = readPoints(x, y, z, n, xyExtent);
 
-	SurfaceInterpolation surfaceInterpolation;
+	SurfaceInterpolation surfaceInterpolation(pointDensityScaleFactor);
 	surfaceInterpolation.setXyExtent(xyExtent);
 
-	Algorithm algorithm(surfaceInterpolation, false, false, pointDensityScaleFactor);
+	Algorithm algorithm(surfaceInterpolation, false, false);
 	UnclassifiedPoints unclassifiedPoints(points);
 	algorithm.classifyPoints(unclassifiedPoints, scaleDomain2Spacing, curvatureThreshold);
 
