@@ -35,12 +35,10 @@ namespace mcc
 {
   Algorithm::Algorithm(ISurfaceInterpolation & surfaceInterpolation,
                        bool                    writeNongroundPts,
-                       bool                    writeRasterSurfaces,
-                       float                   pointDensityScaleFactor)
+                       bool                    writeRasterSurfaces)
     : surfaceInterpolation_(surfaceInterpolation),
       writeNongroundPts_(writeNongroundPts),
       writeRasterSurfaces_(writeRasterSurfaces),
-      pointDensityScaleFactor_(pointDensityScaleFactor)
   {
   }
 
@@ -112,7 +110,7 @@ namespace mcc
         }
         std::cout << "SD " << SD << " - Pass " << pass << std::endl
                   << indent << "Interpolating " << splinePoints.count() << " points:" << std::endl;
-        boost::shared_ptr<IRasterSurface> rasterSurface = surfaceInterpolation_(splinePoints, CR[SD], tension, pointDensityScaleFactor_);
+        boost::shared_ptr<IRasterSurface> rasterSurface = surfaceInterpolation_(splinePoints, CR[SD], tension);
 
         std::cout << indent << "Averaging raster surface..." << std::endl;
         rasterSurface->average(3);  // kernel = 3x3

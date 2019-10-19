@@ -26,8 +26,7 @@ namespace mcc
     public:
       Algorithm(ISurfaceInterpolation & surfaceInterpolation,
                 bool                    writeNongroundPts,
-                bool                    writeRasterSurfaces,
-                float                   pointDensityScaleFactor);
+                bool                    writeRasterSurfaces);
       void classifyPoints(UnclassifiedPoints & points,
                           double                scaleDomain2Spacing,
                           double                curvatureThreshold);
@@ -40,7 +39,6 @@ namespace mcc
       ISurfaceInterpolation & surfaceInterpolation_;
       bool writeNongroundPts_;
       bool writeRasterSurfaces_;
-      float pointDensityScaleFactor_;
   };
 }
 
