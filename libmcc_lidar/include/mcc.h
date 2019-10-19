@@ -4,7 +4,7 @@
 #include <boost/cstdint.hpp>
 // Interface to MCC library for Python (or C++) bindings
 
-uint8_t * mcc_classify(double *x, double *y, double *z, int n, double scaleDomain2Spacing, double curvatureThreshold);
-double * mcc_pass(double *x, double *y, double *z, int n, double scaleDomainSpacing);
+uint8_t * mcc_classify(double *x, double *y, double *z, int n, double scaleDomain2Spacing, double curvatureThreshold, double pointDensityScaleFactor);
+double * mcc_pass(double *x, double *y, double *z, int n, double scaleDomainSpacing, double pointDensityScaleFactor);
 
 #endif // MCC_H
