@@ -47,8 +47,9 @@ namespace mcc
 
   //---------------------------------------------------------------------------
 
-  SurfaceInterpolation::SurfaceInterpolation()
-    : prevCellResolution_(0)
+  SurfaceInterpolation::SurfaceInterpolation(const double pointDensityScaleFactor) :
+    pointDensityScaleFactor_(pointDensityScaleFactor),
+    prevCellResolution_(0)
   {
   }
 
@@ -58,7 +59,7 @@ namespace mcc
                                                                      double               cellResolution,
                                                                      double               tension)
   {
-    return this->operator()(points, &useEveryPoint, cellResolution, tension);
+    return this->operator()(points, &useEveryPoint, cellResolution, tension, pointDensityScaleFactor);
   }
 
   //---------------------------------------------------------------------------
@@ -101,7 +102,7 @@ namespace mcc
 
     // Determine where splines will be interpolated for the points and the
     // raster.
-    boost::shared_ptr<IRegionGenerator> regions = boost::make_shared<DisjointRegions>();
+    boost::shared_ptr<IRegionGenerator> regions = boost::make_shared<DisjointRegions>(pointDensityScaleFactor_);
     int nRegions = regions->subdivide(points, pointSelector, *rasterSurface_);
 
     rasterSurface_->setNoDataValue(-9999);
@@ -126,7 +127,7 @@ namespace mcc
 	  for(std::vector<Cell>::size_type i = 0; i < cells.size(); i++) {
 	    (*rasterSurface_)[cells[i]] = spline.interpolateHeight(cells[i].x(), cells[i].y());
 	  }
- 
+
         }
         catch (SingularMatrixException) {
           // Add another neighboring point and try the spline calculation again.

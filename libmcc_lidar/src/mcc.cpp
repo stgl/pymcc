@@ -40,7 +40,7 @@ shared_ptr<PointVector> readPoints(double *x,
 	return pts;
 }
 
-uint8_t * mcc_classify(double *x, double *y, double *z, int n, double scaleDomain2Spacing, double curvatureThreshold) {
+uint8_t * mcc_classify(double *x, double *y, double *z, int n, double scaleDomain2Spacing, double curvatureThreshold, double pointDensityScaleFactor) {
 
 	XyExtent xyExtent;
 	shared_ptr<PointVector> points = readPoints(x, y, z, n, xyExtent);
@@ -48,7 +48,7 @@ uint8_t * mcc_classify(double *x, double *y, double *z, int n, double scaleDomai
 	SurfaceInterpolation surfaceInterpolation;
 	surfaceInterpolation.setXyExtent(xyExtent);
 
-	Algorithm algorithm(surfaceInterpolation, false, false);
+	Algorithm algorithm(surfaceInterpolation, false, false, pointDensityScaleFactor);
 	UnclassifiedPoints unclassifiedPoints(points);
 	algorithm.classifyPoints(unclassifiedPoints, scaleDomain2Spacing, curvatureThreshold);
 
@@ -66,7 +66,7 @@ uint8_t * mcc_classify(double *x, double *y, double *z, int n, double scaleDomai
 
 }
 
-double * mcc_pass(double *x, double *y, double *z, int n, double scaleDomainSpacing) {
+double * mcc_pass(double *x, double *y, double *z, int n, double scaleDomainSpacing, double pointDensityScaleFactor) {
 
 	XyExtent xyExtent;
 	shared_ptr<PointVector> points = readPoints(x, y, z, n, xyExtent);
@@ -74,7 +74,7 @@ double * mcc_pass(double *x, double *y, double *z, int n, double scaleDomainSpac
 	SurfaceInterpolation surfaceInterpolation;
 	surfaceInterpolation.setXyExtent(xyExtent);
 
-	Algorithm algorithm(surfaceInterpolation, false, false);
+	Algorithm algorithm(surfaceInterpolation, false, false, pointDensityScaleFactor);
 	UnclassifiedPoints unclassifiedPoints(points);
 	algorithm.labelPointsUsingPass(unclassifiedPoints, scaleDomainSpacing);
 

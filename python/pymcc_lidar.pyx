@@ -6,7 +6,8 @@ from libc.stdlib cimport malloc, free
 
 def classify(np.ndarray[double, ndim=2, mode='c'] xyz not None,
              scaleDomain2Spacing not None,
-             curvatureThreshold not None):
+             curvatureThreshold not None,
+             pointDensityScaleFactor):
 
     m_xyz = xyz.shape[0]
     n_xyz = xyz.shape[1]
@@ -20,6 +21,10 @@ def classify(np.ndarray[double, ndim=2, mode='c'] xyz not None,
     cdef double *x = <double *> malloc(n * sizeof(double));
     cdef double *y = <double *> malloc(n * sizeof(double));
     cdef double *z = <double *> malloc(n * sizeof(double));
+    cdef double pdsf = 1.0;
+
+    if pointDensityScaleFactor is not None:
+        pdsf = pointDensityScaleFactor;
 
     for i in range(n):
         x[i] = xyz[i, 0]
@@ -27,8 +32,8 @@ def classify(np.ndarray[double, ndim=2, mode='c'] xyz not None,
         z[i] = xyz[i, 2]
 
     with nogil:
-        classification = pymcc_classify(x, y, z, n, resolution, thresh);
-  
+        classification = pymcc_classify(x, y, z, n, resolution, thresh, pdsf);
+
     cdef np.ndarray[int32_t, ndim=1] np_classification = np.empty(n, dtype=np.int32);
     for i in range(n):
         np_classification[i] = classification[i]
@@ -37,8 +42,9 @@ def classify(np.ndarray[double, ndim=2, mode='c'] xyz not None,
 
 
 def calculate_excess_height(np.ndarray[double, ndim=2, mode='c'] xyz not None,
-                            scaleDomainSpacing not None):
-  
+                            scaleDomainSpacing not None,
+                            pointDensityScaleFactor):
+
     m_xyz = xyz.shape[0]
     n_xyz = xyz.shape[1]
 
@@ -50,6 +56,10 @@ def calculate_excess_height(np.ndarray[double, ndim=2, mode='c'] xyz not None,
     cdef double *x = <double *> malloc(n * sizeof(double));
     cdef double *y = <double *> malloc(n * sizeof(double));
     cdef double *z = <double *> malloc(n * sizeof(double));
+    cdef double pdsf = 1.0;
+
+    if pointDensityScaleFactor is not None:
+        pdsf = pointDensityScaleFactor;
 
     for i in range(n):
         x[i] = xyz[i, 0]
@@ -57,7 +67,7 @@ def calculate_excess_height(np.ndarray[double, ndim=2, mode='c'] xyz not None,
         z[i] = xyz[i, 2]
 
     with nogil:
-        h = pymcc_pass(x, y, z, n, resolution);
+        h = pymcc_pass(x, y, z, n, resolution, pdsf);
 
     cdef np.ndarray[double, ndim=1] np_h = np.empty(m_xyz);
     for i in range(m_xyz):
