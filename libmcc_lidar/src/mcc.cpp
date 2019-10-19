@@ -71,10 +71,10 @@ double * mcc_pass(double *x, double *y, double *z, int n, double scaleDomainSpac
 	XyExtent xyExtent;
 	shared_ptr<PointVector> points = readPoints(x, y, z, n, xyExtent);
 
-	SurfaceInterpolation surfaceInterpolation;
+	SurfaceInterpolation surfaceInterpolation(pointDensityScaleFactor);
 	surfaceInterpolation.setXyExtent(xyExtent);
 
-	Algorithm algorithm(surfaceInterpolation, false, false, pointDensityScaleFactor);
+	Algorithm algorithm(surfaceInterpolation, false, false);
 	UnclassifiedPoints unclassifiedPoints(points);
 	algorithm.labelPointsUsingPass(unclassifiedPoints, scaleDomainSpacing);
 
