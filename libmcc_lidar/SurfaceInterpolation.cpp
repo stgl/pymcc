@@ -59,7 +59,7 @@ namespace mcc
                                                                      double               cellResolution,
                                                                      double               tension)
   {
-    return this->operator()(points, &useEveryPoint, cellResolution, tension, pointDensityScaleFactor);
+    return this->operator()(points, &useEveryPoint, cellResolution, tension);
   }
 
   //---------------------------------------------------------------------------
