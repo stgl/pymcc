@@ -4,6 +4,17 @@ Python bindings for multiscale curvature classification (MCC) of point cloud dat
 
 See [**pymccrgb**](https://pymccrgb.readthedocs.io/en/latest/) for a Python interface to MCC-RGB, an extension of MCC to points with color attributes.
 
+## Installation
+
+This package requires CMake, Boost, at least the C++11 standard library, and the LibLAS C API.
+
+```bash
+git clone https://github.com/stgl/pymcc
+cd pymcc
+# Activate virtual environment as needed 
+pip install .
+```
+
 ## Reference
 
 Implements method described in
