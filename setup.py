@@ -66,9 +66,9 @@ class cmake_build_ext(build_ext):
 
 setup(
     name="pymcc_lidar",
-    version="1.1",
-    author=["Robert Sare", "George Hilley"],
-    author_email="hilleye@stanford.edu",
+    version="1.2",
+    author=["George Hilley", "Robert Sare"],
+    author_email="hilley@stanford.edu",
     description="A Python package for point cloud classification using relative height",
     license="MIT",
     url="https://github.com/stgl/pymcc",
