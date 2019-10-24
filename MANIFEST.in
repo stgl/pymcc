@@ -1,0 +1,3 @@
+include CMakeLists.txt
+recursive-include python/ *
+recursive-include libmcc_lidar/ *
