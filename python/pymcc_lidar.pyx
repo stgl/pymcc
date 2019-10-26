@@ -73,7 +73,7 @@ def calculate_excess_height(np.ndarray[double, ndim=2, mode='c'] xyz not None,
     if subsampling == 'EQUAL_INTERVAL':
         type = pymcc_lidar.EQUAL_INTERVAL;
     elif subsampling == 'RANDOM':
-        type = pmcc_lidar.RANDOM;
+        type = pymcc_lidar.RANDOM;
 
     for i in range(n):
         x[i] = xyz[i, 0]
