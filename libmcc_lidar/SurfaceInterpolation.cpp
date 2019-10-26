@@ -43,24 +43,25 @@ namespace mcc
 {
 
   int pointIncrement = 0;
+  int lastPointSelected = 0;
 
   // A point selector that selects every point.
-  bool useEveryPoint(const IPoint & point)
+  bool useEveryPoint(const IPoint & point, double scaleFactor)
   {
     return true;
   }
 
-  bool useEqualInterval(const IPoint & point, int numberInInterval) {
+  bool useEqualInterval(const IPoint & point, double scaleFactor) {
     pointIncrement++;
-    if(pointIncrement > numberInInterval) {
-      pointIncrement = 0;
+    if(float(pointIncrement)/scaleFactor >= double(lastPointSelected)) {
+      lastPointSelected = pointIncrement;
       return true;
     } else {
       return false;
     }
   }
 
-  bool useRandomSampling(const IPoint &point, float scaleFactor) {
+  bool useRandomSampling(const IPoint &point, double scaleFactor) {
     if(float( rand() % 100000)/100000.0f <= (1.0f / scaleFactor)) {
       return true;
     } else {
@@ -84,13 +85,9 @@ namespace mcc
                                                                      double               tension)
   {
     if(sampling_ == EQUAL_INTERVAL) {
-      double pointDensityScaleFactor = pointDensityScaleFactor_;
-      PointSelector equalIntervalFunction = (PointSelector)[pointDensityScaleFactor](const IPoint &point) { return useEqualInterval(point, pointDensityScaleFactor);};
-      return this->operator()(points, &equalIntervalFunction, cellResolution, tension);
+      return this->operator()(points, &useEqualInterval, cellResolution, tension);
     } else if(sampling_ == RANDOM) {
-      double pointDensityScaleFactor = pointDensityScaleFactor_;
-      PointSelector randomSamplingFunction = (PointSelector)[pointDensityScaleFactor](const IPoint &point) { return useRandomSampling(point, pointDensityScaleFactor);};
-      return this->operator()(points, &randomSamplingFunction, cellResolution, tension);
+      return this->operator()(points, &useRandomSampling, cellResolution, tension);
     } else {
       return this->operator()(points, &useEveryPoint, cellResolution, tension);
     }

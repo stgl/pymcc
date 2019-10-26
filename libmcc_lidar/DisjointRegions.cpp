@@ -246,7 +246,7 @@ namespace mcc
     std::cout << indent << "Sorting points into regions..." << std::endl;
     BOOST_FOREACH(const IPoint & point, points) {
       Cell cell = regions_->getCell(point.x(), point.y());
-      if ((*pointSelector)(point))
+      if ((*pointSelector)(point, pointDensityScaleFactor_))
         (*regions_)[cell].pts.push_back(& point);
       else
         (*regions_)[cell].nPtsNotSelected++;

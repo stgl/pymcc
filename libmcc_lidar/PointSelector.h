@@ -21,7 +21,7 @@ namespace mcc
 
   // A function for selecting points from a group of points.  Returns true if
   // a point is selected.
-  typedef bool (*PointSelector)(const IPoint & point);
+  typedef bool (*PointSelector)(const IPoint & point, double scaleFactor);
 }
 
 #endif
