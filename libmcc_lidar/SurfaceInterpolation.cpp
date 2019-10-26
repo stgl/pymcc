@@ -19,10 +19,12 @@
 
 #include <cmath>
 #include <iostream>
+#include <stdlib.h>
 
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/shared_ptr.hpp>
+
 
 #include "DisjointRegions.h"
 #include "IInterpolationRegion.h"
@@ -39,16 +41,38 @@
 
 namespace mcc
 {
+
+  int pointIncrement = 0;
+
   // A point selector that selects every point.
   bool useEveryPoint(const IPoint & point)
   {
     return true;
   }
 
+  bool useEqualInterval(const IPoint & point, int numberInInterval) {
+    pointIncrement++;
+    if(pointIncrement > numberInInterval) {
+      pointIncrement = 0;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  bool useRandomSampling(const IPoint &point, float scaleFactor) {
+    if(float( rand() % 100000)/100000.0f <= (1.0f / scaleFactor)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   //---------------------------------------------------------------------------
 
-  SurfaceInterpolation::SurfaceInterpolation(const double pointDensityScaleFactor) :
+  SurfaceInterpolation::SurfaceInterpolation(const double pointDensityScaleFactor, subSamplingType sampling) :
     pointDensityScaleFactor_(pointDensityScaleFactor),
+    sampling_(sampling),
     prevCellResolution_(0)
   {
   }
@@ -59,7 +83,15 @@ namespace mcc
                                                                      double               cellResolution,
                                                                      double               tension)
   {
-    return this->operator()(points, &useEveryPoint, cellResolution, tension);
+    if(sampling_ == EQUAL_INTERVAL) {
+      bool equalIntervalFunction = [](const IPoint &point) { return useEqualInterval(point, pointDensityScaleFactor_)};
+      return this->operator()(points, &equalIntervalFunction, cellResolution, tension);
+    } else if(sampling_ == RANDOM) {
+      bool randomSamplingFunction = [](const IPoint &point) { return useRandomSampling(point, pointDensityScaleFactor_)};
+      return this->operator()(points, &randomSamplingFunction, cellResolution, tension);
+    } else {
+      return this->operator()(points, &useEveryPoint, cellResolution, tension);
+    }
   }
 
   //---------------------------------------------------------------------------

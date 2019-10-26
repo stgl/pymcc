@@ -40,12 +40,12 @@ shared_ptr<PointVector> readPoints(double *x,
 	return pts;
 }
 
-uint8_t * mcc_classify(double *x, double *y, double *z, int n, double scaleDomain2Spacing, double curvatureThreshold, double pointDensityScaleFactor) {
+uint8_t * mcc_classify(double *x, double *y, double *z, int n, double scaleDomain2Spacing, double curvatureThreshold, double pointDensityScaleFactor, subSamplingType sampling) {
 
 	XyExtent xyExtent;
 	shared_ptr<PointVector> points = readPoints(x, y, z, n, xyExtent);
 
-	SurfaceInterpolation surfaceInterpolation(pointDensityScaleFactor);
+	SurfaceInterpolation surfaceInterpolation(pointDensityScaleFactor, sampling);
 	surfaceInterpolation.setXyExtent(xyExtent);
 
 	Algorithm algorithm(surfaceInterpolation, false, false);
@@ -66,12 +66,12 @@ uint8_t * mcc_classify(double *x, double *y, double *z, int n, double scaleDomai
 
 }
 
-double * mcc_pass(double *x, double *y, double *z, int n, double scaleDomainSpacing, double pointDensityScaleFactor) {
+double * mcc_pass(double *x, double *y, double *z, int n, double scaleDomainSpacing, double pointDensityScaleFactor, subSamplingType sampling) {
 
 	XyExtent xyExtent;
 	shared_ptr<PointVector> points = readPoints(x, y, z, n, xyExtent);
 
-	SurfaceInterpolation surfaceInterpolation(pointDensityScaleFactor);
+	SurfaceInterpolation surfaceInterpolation(pointDensityScaleFactor, sampling);
 	surfaceInterpolation.setXyExtent(xyExtent);
 
 	Algorithm algorithm(surfaceInterpolation, false, false);
