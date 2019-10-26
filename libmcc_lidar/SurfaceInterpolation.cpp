@@ -164,6 +164,7 @@ namespace mcc
 
         }
         catch (SingularMatrixException) {
+          std::cout << indent << "Caught singular matrix for spline" << std::endl;
           // Add another neighboring point and try the spline calculation again.
           regions->addNeighborPointsToCurrentRegion(1);
 
