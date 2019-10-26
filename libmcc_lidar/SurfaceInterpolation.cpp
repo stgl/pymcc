@@ -85,13 +85,13 @@ namespace mcc
                                                                      double               tension)
   {
     if(sampling_ == EQUAL_INTERVAL) {
-      std::cout << indent << "Using qqual interval sampling." << std::endl;
+      std::cout << "Using qqual interval sampling." << std::endl;
       return this->operator()(points, &useEqualInterval, cellResolution, tension);
     } else if(sampling_ == RANDOM) {
-      std::cout << indent << "Using random sampling" << std::endl;
+      std::cout << "Using random sampling" << std::endl;
       return this->operator()(points, &useRandomSampling, cellResolution, tension);
     } else {
-      std::cout << indent << "Using all points." << std::endl;
+      std::cout << "Using all points." << std::endl;
       return this->operator()(points, &useEveryPoint, cellResolution, tension);
     }
   }
