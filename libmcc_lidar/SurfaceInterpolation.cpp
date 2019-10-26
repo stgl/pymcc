@@ -84,10 +84,12 @@ namespace mcc
                                                                      double               tension)
   {
     if(sampling_ == EQUAL_INTERVAL) {
-      bool equalIntervalFunction = [pointDensityScaleFactor_](const IPoint &point) { return useEqualInterval(point, pointDensityScaleFactor_)};
+      double pointDensityScaleFactor = pointDensityScaleFactor_;
+      bool equalIntervalFunction = [pointDensityScaleFactor](const IPoint &point) { return useEqualInterval(point, pointDensityScaleFactor_)};
       return this->operator()(points, &equalIntervalFunction, cellResolution, tension);
     } else if(sampling_ == RANDOM) {
-      bool randomSamplingFunction = [pointDensityScaleFactor_](const IPoint &point) { return useRandomSampling(point, pointDensityScaleFactor_)};
+      double pointDensityScaleFactor = pointDensityScaleFactor_;
+      bool randomSamplingFunction = [pointDensityScaleFactor](const IPoint &point) { return useRandomSampling(point, pointDensityScaleFactor_)};
       return this->operator()(points, &randomSamplingFunction, cellResolution, tension);
     } else {
       return this->operator()(points, &useEveryPoint, cellResolution, tension);
