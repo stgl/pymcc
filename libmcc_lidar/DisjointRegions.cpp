@@ -31,8 +31,10 @@
 
 namespace mcc
 {
-  DisjointRegions::DisjointRegions()
-    : iterationState_(RegionIteration_Done)
+
+  DisjointRegions::DisjointRegions(const double pointDensityScaleFactor)
+    : iterationState_(RegionIteration_Done),
+    pointDensityScaleFactor_(pointDensityScaleFactor)
   {
   }
 
@@ -201,9 +203,10 @@ namespace mcc
                                  const RasterSurface & raster)
   {
     // Subdivide the raster's area into non-overlapping regions.  The goal is
-    // to have approximately the same # of points in each region. 
+    // to have approximately the same # of points in each region.
 
-    int desiredNumRegions = points.count() / desiredPtsPerRegion;
+    int desiredPtsPerRegionWithScale = round(pointDensityScaleFactor_ *  desiredPtsPerRegion);
+    int desiredNumRegions = points.count() / desiredPtsPerRegionWithScale;
       // Rounding down because one less region means possibly more pts per
       // region.
 
@@ -223,13 +226,13 @@ namespace mcc
     int nRows = int(std::floor(rasterHeight / desiredRegionSize));
 	if (nRows > int(raster.rows())){
 		nRows = int(raster.rows());
-	} 
+	}
     double regionHeight = rasterHeight / nRows;
 
     int nColumns = int(std::floor(rasterWidth / desiredRegionSize));
 	if (nColumns > int(raster.columns())){
 		nColumns = int(raster.columns());
-	} 
+	}
     double regionWidth = rasterWidth / nColumns;
 
     // Create the 2-d arry of InterpolationRegion (nRows, nColumns)
@@ -243,7 +246,7 @@ namespace mcc
     std::cout << indent << "Sorting points into regions..." << std::endl;
     BOOST_FOREACH(const IPoint & point, points) {
       Cell cell = regions_->getCell(point.x(), point.y());
-      if ((*pointSelector)(point))
+      if ((*pointSelector)(point, pointDensityScaleFactor_))
         (*regions_)[cell].pts.push_back(& point);
       else
         (*regions_)[cell].nPtsNotSelected++;
@@ -291,7 +294,7 @@ namespace mcc
           }
         } else {
           // Case (B) - moved down into new region row, so scan across region
-          // columns, copying the cell block widths from the regions in the 
+          // columns, copying the cell block widths from the regions in the
           // top region row into their corresponding regions of the current
           // region row.
           regionRow += down(1);
@@ -386,8 +389,9 @@ namespace mcc
     nPointsLeftInOuterRing = 0;
 
     unsigned int nSelectedPts = currentRegion->pts.size();
-    if (nSelectedPts < desiredPtsPerRegion) {
-      addNeighborPointsToCurrentRegion(desiredPtsPerRegion - nSelectedPts);
+    int desiredPtsPerRegionWithScale = round(pointDensityScaleFactor_ *  desiredPtsPerRegion);
+    if (nSelectedPts < desiredPtsPerRegionWithScale) {
+      addNeighborPointsToCurrentRegion(desiredPtsPerRegionWithScale - nSelectedPts);
     }
 
     // Compute the cell list for the current region

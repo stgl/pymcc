@@ -19,10 +19,12 @@
 
 #include <cmath>
 #include <iostream>
+#include <stdlib.h>
 
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/shared_ptr.hpp>
+
 
 #include "DisjointRegions.h"
 #include "IInterpolationRegion.h"
@@ -39,16 +41,40 @@
 
 namespace mcc
 {
+
+  int pointIncrement = 0;
+  int lastPointSelected = 0;
+
   // A point selector that selects every point.
-  bool useEveryPoint(const IPoint & point)
+  bool useEveryPoint(const IPoint & point, double scaleFactor)
   {
     return true;
   }
 
+  bool useEqualInterval(const IPoint & point, double scaleFactor) {
+    pointIncrement++;
+    if(float(pointIncrement)/scaleFactor >= double(lastPointSelected)) {
+      lastPointSelected = pointIncrement;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  bool useRandomSampling(const IPoint &point, double scaleFactor) {
+    if(float( rand() % 100000)/100000.0f <= (1.0f / scaleFactor)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   //---------------------------------------------------------------------------
 
-  SurfaceInterpolation::SurfaceInterpolation()
-    : prevCellResolution_(0)
+  SurfaceInterpolation::SurfaceInterpolation(const double pointDensityScaleFactor, subSamplingType sampling) :
+    pointDensityScaleFactor_(pointDensityScaleFactor),
+    sampling_(sampling),
+    prevCellResolution_(0)
   {
   }
 
@@ -58,7 +84,16 @@ namespace mcc
                                                                      double               cellResolution,
                                                                      double               tension)
   {
-    return this->operator()(points, &useEveryPoint, cellResolution, tension);
+    if(sampling_ == EQUAL_INTERVAL) {
+      std::cout << "Using qqual interval sampling." << std::endl;
+      return this->operator()(points, &useEqualInterval, cellResolution, tension);
+    } else if(sampling_ == RANDOM) {
+      std::cout << "Using random sampling" << std::endl;
+      return this->operator()(points, &useRandomSampling, cellResolution, tension);
+    } else {
+      std::cout << "Using all points." << std::endl;
+      return this->operator()(points, &useEveryPoint, cellResolution, tension);
+    }
   }
 
   //---------------------------------------------------------------------------
@@ -101,7 +136,7 @@ namespace mcc
 
     // Determine where splines will be interpolated for the points and the
     // raster.
-    boost::shared_ptr<IRegionGenerator> regions = boost::make_shared<DisjointRegions>();
+    boost::shared_ptr<IRegionGenerator> regions = boost::make_shared<DisjointRegions>(pointDensityScaleFactor_);
     int nRegions = regions->subdivide(points, pointSelector, *rasterSurface_);
 
     rasterSurface_->setNoDataValue(-9999);
@@ -126,7 +161,7 @@ namespace mcc
 	  for(std::vector<Cell>::size_type i = 0; i < cells.size(); i++) {
 	    (*rasterSurface_)[cells[i]] = spline.interpolateHeight(cells[i].x(), cells[i].y());
 	  }
- 
+
         }
         catch (SingularMatrixException) {
           // Add another neighboring point and try the spline calculation again.
