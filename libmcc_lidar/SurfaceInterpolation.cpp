@@ -149,9 +149,8 @@ namespace mcc
               << indent << "  ";
     ProgressBar progressBar(std::cout, nRegions);
     int nSplinesComputed = 0;
-    #pragma omp parallel for
-    for(int regionCount = 0; regionCount < nRegions; regionCount++) {
-      const IInterpolationRegion *region = regions->getNextRegion();
+    #pragma omp parallel
+    while(const IInterpolationRegion *region = regions->getNextRegion()) {
       bool splineComputed = false;
       while (! splineComputed) {
         try {
