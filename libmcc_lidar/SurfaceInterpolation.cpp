@@ -149,18 +149,19 @@ namespace mcc
               << indent << "  ";
     ProgressBar progressBar(std::cout, nRegions);
     int nSplinesComputed = 0;
-    while (const IInterpolationRegion * region = regions->getNextRegion()) {
+    #pragma omp parallel for
+    for(int regionCount = 0; regionCount < nRegions; regionCount++) {
+      const IInterpolationRegion *region = regions->getNextRegion();
       bool splineComputed = false;
       while (! splineComputed) {
         try {
           RegularizedSpline spline(region->points(), 0.0);
           splineComputed = true;
-	  std::vector<Cell> cells = region->cells();
+	        std::vector<Cell> cells = region->cells();
 
-	  #pragma omp parallel for
-	  for(std::vector<Cell>::size_type i = 0; i < cells.size(); i++) {
-	    (*rasterSurface_)[cells[i]] = spline.interpolateHeight(cells[i].x(), cells[i].y());
-	  }
+      	  for(std::vector<Cell>::size_type i = 0; i < cells.size(); i++) {
+      	    (*rasterSurface_)[cells[i]] = spline.interpolateHeight(cells[i].x(), cells[i].y());
+      	  }
 
         }
         catch (SingularMatrixException) {
