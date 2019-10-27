@@ -24,6 +24,7 @@
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/shared_ptr.hpp>
+#include <omp.h>
 
 
 #include "DisjointRegions.h"
@@ -155,7 +156,7 @@ namespace mcc
     sj = -1;     // shared loop counter
     sstop = 0;   // shared stopping condition
 
-    #pragma omp parallel private(tn,tj,tstop)
+    #pragma omp parallel private(tn,tj)
     {
       tn = omp_get_thread_num();
       while (!sstop)
@@ -202,7 +203,7 @@ namespace mcc
         printf("Thread %d, iteration %d, sstop=%d\n",tn,tj,sstop);
       }
     }
-    
+
     std::cout << std::endl;
 
     return rasterSurface_;
