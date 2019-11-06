@@ -168,7 +168,9 @@ namespace mcc
           tj = sj;   // ...and keep a private copy of it
         }
 
+        std::cout << "Getting region" << std::endl;
         const IInterpolationRegion *region = regions->getNextRegion();
+        std::cout << "Got region" << std::endl;
         if(!region) {
           std::cout << "no region, flushing sstop" << std::endl;
           sstop = 1;
