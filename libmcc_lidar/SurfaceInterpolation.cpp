@@ -214,7 +214,7 @@ namespace mcc
 
     std::cout << std::endl;
 
-    std::cout << "returning from interpolation." << std:endl;
+    std::cout << "returning from interpolation." << std::endl;
 
     return rasterSurface_;
   }
