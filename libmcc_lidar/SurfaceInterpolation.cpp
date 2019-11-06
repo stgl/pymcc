@@ -170,9 +170,11 @@ namespace mcc
 
         const IInterpolationRegion *region = regions->getNextRegion();
         if(!region) {
+          std::cout << "no region, flushing sstop" << std::endl;
           sstop = 1;
           #pragma omp flush(sstop)
         } else {
+          std::cout << "got region.  starting spline interpolation" << std::endl;
           bool splineComputed = false;
           while (! splineComputed) {
             try {
@@ -183,6 +185,8 @@ namespace mcc
           	  for(std::vector<Cell>::size_type i = 0; i < cells.size(); i++) {
           	    (*rasterSurface_)[cells[i]] = spline.interpolateHeight(cells[i].x(), cells[i].y());
           	  }
+
+              std::cout << "computed spline." << std::endl;
 
             }
             catch (SingularMatrixException) {
@@ -197,7 +201,9 @@ namespace mcc
             }
           }
           nSplinesComputed++;
+          std::cout << "updating progress bar" << std::endl;
           progressBar.update(nSplinesComputed);
+          std::cout << "updated progress bar" << std::endl;
         }
         /* When sstop=1, most threads continue to this statment */
         printf("Thread %d, iteration %d, sstop=%d\n",tn,tj,sstop);
@@ -205,6 +211,8 @@ namespace mcc
     }
 
     std::cout << std::endl;
+
+    std::cout << "returning from interpolation." << std:endl;
 
     return rasterSurface_;
   }
