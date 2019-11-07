@@ -195,8 +195,10 @@ namespace mcc
             	    (*rasterSurface_)[cells[i]] = spline.interpolateHeight(cells[i].x(), cells[i].y());
                   std::cout << " done." << std::endl;
             	  }
+                std::cout << "computed spline." << std::endl;
+              } else {
+                std::cout << "did not compute. Fewer than 3 points." << std::endl;
               }
-              std::cout << "computed spline." << std::endl;
             }
             catch (SingularMatrixException) {
               std::cout << indent << "Caught singular matrix for spline" << std::endl;
