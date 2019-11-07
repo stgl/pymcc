@@ -155,8 +155,9 @@ namespace mcc
 
     sj = -1;     // shared loop counter
     sstop = 0;   // shared stopping condition
+    const IInterpolationRegion *region; // Region, declared as private below
 
-    #pragma omp parallel private(tn,tj)
+    #pragma omp parallel private(tn,tj,region)
     {
       tn = omp_get_thread_num();
       while (!sstop)
@@ -169,7 +170,7 @@ namespace mcc
         }
 
         std::cout << "Getting region" << std::endl;
-        const IInterpolationRegion *region = regions->getNextRegion();
+        region = regions->getNextRegion();
         std::cout << "Got region" << std::endl;
         if(!region) {
           std::cout << "no region, flushing sstop" << std::endl;
