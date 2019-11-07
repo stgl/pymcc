@@ -155,7 +155,7 @@ namespace mcc
 
     sj = -1;     // shared loop counter
     sstop = 0;   // shared stopping condition
-    const IInterpolationRegion *region; // Region, declared as private below
+    IInterpolationRegion *region; // Region, declared as private below
 
     #pragma omp parallel private(tn,tj,region)
     {
