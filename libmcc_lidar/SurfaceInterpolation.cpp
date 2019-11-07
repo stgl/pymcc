@@ -181,9 +181,13 @@ namespace mcc
           while (! splineComputed) {
             try {
               if(region->points().size() >= 3) {
+                std::cout << "Constructing spline... ";
                 RegularizedSpline spline(region->points(), 0.0);
+                std::cout << "done." << std::endl;
                 splineComputed = true;
+                std::cout << "Getting cells from region... ";
       	        std::vector<Cell> cells = region->cells();
+                std::cout << "done." << std::endl;
 
                 std::cout << "starting interpolation for cells." << std::endl;
             	  for(std::vector<Cell>::size_type i = 0; i < cells.size(); i++) {
