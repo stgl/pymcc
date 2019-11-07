@@ -186,9 +186,9 @@ namespace mcc
 
               std::cout << "starting interpolation for cells." << std::endl;
           	  for(std::vector<Cell>::size_type i = 0; i < cells.size(); i++) {
-                std::cout << "cell: " << i << " started..."
+                std::cout << "cell: " << i << " started..."  << std::endl;
           	    (*rasterSurface_)[cells[i]] = spline.interpolateHeight(cells[i].x(), cells[i].y());
-                std::cout << " done." << endl;
+                std::cout << " done." << std::endl;
           	  }
 
               std::cout << "computed spline." << std::endl;
