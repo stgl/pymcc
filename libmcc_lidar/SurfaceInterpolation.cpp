@@ -148,7 +148,7 @@ namespace mcc
     // heights for its cells.
     std::cout << indent << "Computing splines for regions and cell heights for raster surface:" << std::endl
               << indent << "  ";
-    ProgressBar progressBar(std::cout, nRegions);
+    //ProgressBar progressBar(std::cout, nRegions);
     int nSplinesComputed = 0;
 
     int sj, sstop, tn, tj;
@@ -187,9 +187,8 @@ namespace mcc
 
                 std::cout << "starting interpolation for cells." << std::endl;
             	  for(std::vector<Cell>::size_type i = 0; i < cells.size(); i++) {
-                  std::cout << "cell: " << i << " started...";
+                  std::cout << "cell: " << i << " started..." << std::endl;
             	    (*rasterSurface_)[cells[i]] = spline.interpolateHeight(cells[i].x(), cells[i].y());
-                  std::cout << " done." << std::endl;
             	  }
                 std::cout << "computed spline." << std::endl;
               } else {
@@ -208,9 +207,9 @@ namespace mcc
             }
           }
           nSplinesComputed++;
-          std::cout << "updating progress bar" << std::endl;
-          progressBar.update(nSplinesComputed);
-          std::cout << "updated progress bar" << std::endl;
+          //std::cout << "updating progress bar" << std::endl;
+          //progressBar.update(nSplinesComputed);
+          //std::cout << "updated progress bar" << std::endl;
         }
         /* When sstop=1, most threads continue to this statment */
         printf("Thread %d, iteration %d, sstop=%d\n",tn,tj,sstop);
