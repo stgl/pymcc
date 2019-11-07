@@ -180,19 +180,19 @@ namespace mcc
           bool splineComputed = false;
           while (! splineComputed) {
             try {
-              RegularizedSpline spline(region->points(), 0.0);
-              splineComputed = true;
-    	        std::vector<Cell> cells = region->cells();
+              if(region->points().size() >= 3) {
+                RegularizedSpline spline(region->points(), 0.0);
+                splineComputed = true;
+      	        std::vector<Cell> cells = region->cells();
 
-              std::cout << "starting interpolation for cells." << std::endl;
-          	  for(std::vector<Cell>::size_type i = 0; i < cells.size(); i++) {
-                std::cout << "cell: " << i << " started...";
-          	    (*rasterSurface_)[cells[i]] = spline.interpolateHeight(cells[i].x(), cells[i].y());
-                std::cout << " done." << std::endl;
-          	  }
-
+                std::cout << "starting interpolation for cells." << std::endl;
+            	  for(std::vector<Cell>::size_type i = 0; i < cells.size(); i++) {
+                  std::cout << "cell: " << i << " started...";
+            	    (*rasterSurface_)[cells[i]] = spline.interpolateHeight(cells[i].x(), cells[i].y());
+                  std::cout << " done." << std::endl;
+            	  }
+              }
               std::cout << "computed spline." << std::endl;
-
             }
             catch (SingularMatrixException) {
               std::cout << indent << "Caught singular matrix for spline" << std::endl;
