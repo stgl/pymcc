@@ -26,11 +26,9 @@ namespace mcc
   {
     public:
       // The set of points for computing the spline.
-      virtual const std::vector<const IPoint *> & points() const = 0;
 
       // The set of raster cells whose heights should be interpolated from the
       // spline.
-      virtual const std::vector<Cell> & cells() const = 0;
 
       virtual ~IInterpolationRegion() { }
   };

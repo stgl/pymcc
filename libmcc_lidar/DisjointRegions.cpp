@@ -320,7 +320,7 @@ namespace mcc
     return nRows * nColumns;
   }
 
-  Cell DisjointRegions::getNextCell()
+  const Cell* DisjointRegions::getNextCell()
   {
     switch (iterationState_) {
       case RegionIteration_Initialized :
@@ -350,23 +350,54 @@ namespace mcc
         assert(iterationState_ == RegionIteration_Done);
         return 0;
     }
-    return regions_->getCell(currentRegionRow_, currentRegionColumn_);
+    std::cout << "current row: " << currentRegionRow_ << ", current column: " << currentRegionColumn_ << std::endl;
+
+    return new Cell(regions_->getCell(currentRegionRow_, currentRegionColumn_));
 
   }
 
-  const IInterpolationRegion * DisjointRegions::getRegionForCell(Cell cell)
+  const InterpolationRegion * DisjointRegions::getRegionForCell(const Cell *cell)
   {
-    unsigned int row = cell.row();
-    unsigned int column = cell.column();
+    unsigned int row = cell->row();
+    unsigned int column = cell->column();
 
     return &( (*regions_)(row, column) );
 
   }
 
-  void DisjointRegions::getPointsAndCellsForCell(Cell cell, int nExtraPoints,
-    std::vector<const IPoint *> points, std::vector<Cell> cells)
+    //---------------------------------------------------------------------------
+
+  void addNeighborPointsToRegionWithCell(Grid<InterpolationRegion> &  regions,
+		  const Cell & cell, std::vector<const IPoint *> &points, int nPoints,
+    int &indexNextAvailableNeighbor, std::vector<NeighborPoint> &neighborPts,
+    int &neighborhoodSize, int &nPointsLeftInOuterRing)
   {
-    IInterpolationRegion *region = getRegionForCell(cell);
+    while (nPoints > 0) {
+      while (nPointsLeftInOuterRing == 0) {
+        // Expand the neighborhood, and get points from the new outer ring.
+        neighborPts.clear();
+        neighborhoodSize += 2;  // first 3x3, then 5x5, 7x7, ...
+        getPointsFromOuterRing(regions, cell, neighborhoodSize, neighborPts);
+        nPointsLeftInOuterRing = neighborPts.size();
+        std::sort(neighborPts.begin(), neighborPts.begin());
+        indexNextAvailableNeighbor = 0;
+      }
+
+      int nPtsToAdd = (nPointsLeftInOuterRing < nPoints) ? nPointsLeftInOuterRing : nPoints;
+      std::for_each(neighborPts.begin() + indexNextAvailableNeighbor,
+                    neighborPts.begin() + indexNextAvailableNeighbor + nPtsToAdd,
+                    AppendPoint(points));
+      indexNextAvailableNeighbor += nPtsToAdd;
+      nPointsLeftInOuterRing -= nPtsToAdd;
+      nPoints -= nPtsToAdd;
+    }
+  }
+
+  void DisjointRegions::getPointsAndCellsForCell(const Cell *cell, int nExtraPoints,
+    std::vector<const IPoint *> &points, std::vector<Cell> &cells)
+  {
+    const InterpolationRegion *region = getRegionForCell(cell);
+    std::cout << "Points in region: " << region->pts.size() << std::endl;
     points = region->pts;
     int neighborhoodSize = 1;
     std::vector<NeighborPoint> neighborPts;
@@ -375,12 +406,18 @@ namespace mcc
     int indexNextAvailableNeighbor = 0;
     unsigned int nSelectedPts = points.size();
     int desiredPtsPerRegionWithScale = round(pointDensityScaleFactor_ *  desiredPtsPerRegion);
-    if (nSelectedPts < desiredPtsPerRegionWithScale) {
-      addNeighborPointsToRegionWithCell(points, desiredPtsPerRegionWithScale - nSelectedPts,
+
+    while (nSelectedPts < desiredPtsPerRegionWithScale) {
+
+      addNeighborPointsToRegionWithCell(*regions_, *cell, points, desiredPtsPerRegionWithScale - nSelectedPts,
         indexNextAvailableNeighbor, neighborPts, neighborhoodSize, nPointsLeftInOuterRing);
+      nSelectedPts = points.size();
+      std::cout << "Neighborhood size: " << neighborhoodSize << std::endl;
+
     }
+
     if(nExtraPoints > 0) {
-      addNeighborPointsToRegionWithCell(points, nExtraPoints,indexNextAvailableNeighbor,
+      addNeighborPointsToRegionWithCell(*regions_, *cell, points, nExtraPoints,indexNextAvailableNeighbor,
         neighborPts, neighborhoodSize, nPointsLeftInOuterRing);
     }
 
@@ -399,30 +436,4 @@ namespace mcc
     }
   }
 
-  //---------------------------------------------------------------------------
-
-  void DisjointRegions::addNeighborPointsToRegionWithCell(std::vector<const IPoint *> points, int nPoints,
-    int &indexNextAvailableNeighbor, std::vector<NeighborPoint> &neighborPts,
-    int &neighborhoodSize, int &nPointsLeftInOuterRing)
-  {
-    while (nPoints > 0) {
-      while (nPointsLeftInOuterRing == 0) {
-        // Expand the neighborhood, and get points from the new outer ring.
-        neighborPts.clear();
-        neighborhoodSize += 2;  // first 3x3, then 5x5, 7x7, ...
-        getPointsFromOuterRing(*regions_, currentRegionCell, neighborhoodSize, neighborPts);
-        nPointsLeftInOuterRing = neighborPts.size();
-        std::sort(neighborPts.begin(), neighborPts.begin());
-        indexNextAvailableNeighbor = 0;
-      }
-
-      int nPtsToAdd = (nPointsLeftInOuterRing < nPoints) ? nPointsLeftInOuterRing : nPoints;
-      std::for_each(neighborPts.begin() + indexNextAvailableNeighbor,
-                    neighborPts.begin() + indexNextAvailableNeighbor + nPtsToAdd,
-                    AppendPoint(points));
-      indexNextAvailableNeighbor += nPtsToAdd;
-      nPointsLeftInOuterRing -= nPtsToAdd;
-      nPoints -= nPtsToAdd;
-    }
-  }
 }

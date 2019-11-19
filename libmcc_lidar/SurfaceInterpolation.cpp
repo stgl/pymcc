@@ -156,11 +156,8 @@ namespace mcc
     sj = -1;     // shared loop counter
     sstop = 0;   // shared stopping condition
     const IInterpolationRegion *region; // Region, declared as private below
-    Cell cell;
-    std::vector<const IPoint *> points;
-    std::vector<Cell> cells;
 
-    #pragma omp parallel private(tn,tj,region,cell,points,cells)
+    #pragma omp parallel private(tn,tj,region)
     {
       tn = omp_get_thread_num();
       while (!sstop)
@@ -173,7 +170,7 @@ namespace mcc
         }
 
         std::cout << "Getting cell" << std::endl;
-        cell = regions->getNextCell();
+        const Cell *cell = regions->getNextCell();
         std::cout << "Got cell" << std::endl;
         if(!cell) {
           std::cout << "no region, flushing sstop" << std::endl;
@@ -185,7 +182,8 @@ namespace mcc
           bool splineComputed = false;
           while (! splineComputed) {
             try {
-
+              std::vector<const IPoint *> points;
+              std::vector<Cell> cells;
               regions->getPointsAndCellsForCell(cell, 0, points, cells);
               if(points.size() >= 3) {
                 std::cout << "Constructing spline... ";
@@ -200,7 +198,7 @@ namespace mcc
             	  }
                 std::cout << "computed spline." << std::endl;
               } else {
-                std::cout << "did not compute. Fewer than 3 points." << std::endl;
+                //std::cout << "did not compute. Fewer than 3 points." << std::endl;
               }
             }
             catch (SingularMatrixException) {
@@ -208,7 +206,8 @@ namespace mcc
               // Add another neighboring point and try the spline calculation again.
 
               // Add neighboring points needs to be written in terms of grid location.
-
+              std::vector<const IPoint *> points;
+              std::vector<Cell> cells;
               regions->getPointsAndCellsForCell(cell, 1, points, cells);
 
               // A safety check to prevent an endless loop from consuming all the
