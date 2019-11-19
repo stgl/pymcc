@@ -397,7 +397,6 @@ namespace mcc
     std::vector<const IPoint *> &points, std::vector<Cell> &cells)
   {
     const InterpolationRegion *region = getRegionForCell(cell);
-    std::cout << "Points in region: " << region->pts.size() << std::endl;
     points = region->pts;
     int neighborhoodSize = 1;
     std::vector<NeighborPoint> neighborPts;
@@ -412,14 +411,14 @@ namespace mcc
       addNeighborPointsToRegionWithCell(*regions_, *cell, points, desiredPtsPerRegionWithScale - nSelectedPts,
         indexNextAvailableNeighbor, neighborPts, neighborhoodSize, nPointsLeftInOuterRing);
       nSelectedPts = points.size();
-      std::cout << "Neighborhood size: " << neighborhoodSize << std::endl;
 
     }
-
+    
     if(nExtraPoints > 0) {
       addNeighborPointsToRegionWithCell(*regions_, *cell, points, nExtraPoints,indexNextAvailableNeighbor,
         neighborPts, neighborhoodSize, nPointsLeftInOuterRing);
     }
+    std::cout << "Points in region: " << region->pts.size() << std::endl;
 
     cells.clear();
     const CellBlock & cellBlock = region->cellBlock;

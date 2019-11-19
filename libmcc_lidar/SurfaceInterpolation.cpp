@@ -169,16 +169,13 @@ namespace mcc
           tj = sj;   // ...and keep a private copy of it
         }
 
-        std::cout << "Getting cell" << std::endl;
         const Cell *cell = regions->getNextCell();
-        std::cout << "Got cell" << std::endl;
         if(!cell) {
           std::cout << "no region, flushing sstop" << std::endl;
           sstop = 1;
           #pragma omp flush(sstop)
         } else {
           region = regions->getRegionForCell(cell);
-          std::cout << "got region.  starting spline interpolation" << std::endl;
           bool splineComputed = false;
           while (! splineComputed) {
             try {
@@ -186,19 +183,14 @@ namespace mcc
               std::vector<Cell> cells;
               regions->getPointsAndCellsForCell(cell, 0, points, cells);
               if(points.size() >= 3) {
-                std::cout << "Constructing spline... ";
                 RegularizedSpline spline(points, 0.0);
-                std::cout << "done." << std::endl;
                 splineComputed = true;
 
-                std::cout << "starting interpolation for cells." << std::endl;
             	  for(std::vector<Cell>::size_type i = 0; i < cells.size(); i++) {
-                  std::cout << "cell: " << i << " started..." << std::endl;
             	    (*rasterSurface_)[cells[i]] = spline.interpolateHeight(cells[i].x(), cells[i].y());
             	  }
-                std::cout << "computed spline." << std::endl;
               } else {
-                //std::cout << "did not compute. Fewer than 3 points." << std::endl;
+                std::cout << "did not compute. Fewer than 3 points." << std::endl;
               }
             }
             catch (SingularMatrixException) {
