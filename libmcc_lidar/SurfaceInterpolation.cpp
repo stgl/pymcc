@@ -155,9 +155,12 @@ namespace mcc
 
     sj = -1;     // shared loop counter
     sstop = 0;   // shared stopping condition
-    IInterpolationRegion *region; // Region, declared as private below
+    const IInterpolationRegion *region; // Region, declared as private below
+    Cell cell;
+    std::vector<const IPoint *> points;
+    std::vector<Cell> cells;
 
-    #pragma omp parallel private(tn,tj,region)
+    #pragma omp parallel private(tn,tj,region,cell,points,cells)
     {
       tn = omp_get_thread_num();
       while (!sstop)
@@ -169,26 +172,26 @@ namespace mcc
           tj = sj;   // ...and keep a private copy of it
         }
 
-        std::cout << "Getting region" << std::endl;
-        region = regions->getNextRegion();
-        std::cout << "Got region" << std::endl;
-        if(!region) {
+        std::cout << "Getting cell" << std::endl;
+        cell = regions->getNextCell();
+        std::cout << "Got cell" << std::endl;
+        if(!cell) {
           std::cout << "no region, flushing sstop" << std::endl;
           sstop = 1;
           #pragma omp flush(sstop)
         } else {
+          region = regions->getRegionForCell(cell);
           std::cout << "got region.  starting spline interpolation" << std::endl;
           bool splineComputed = false;
           while (! splineComputed) {
             try {
-              if(region->points().size() >= 3) {
+
+              regions->getPointsAndCellsForCell(cell, 0, points, cells);
+              if(points.size() >= 3) {
                 std::cout << "Constructing spline... ";
-                RegularizedSpline spline(region->points(), 0.0);
+                RegularizedSpline spline(points, 0.0);
                 std::cout << "done." << std::endl;
                 splineComputed = true;
-                std::cout << "Getting cells from region... ";
-      	        std::vector<Cell> cells = region->cells();
-                std::cout << "done." << std::endl;
 
                 std::cout << "starting interpolation for cells." << std::endl;
             	  for(std::vector<Cell>::size_type i = 0; i < cells.size(); i++) {
@@ -203,11 +206,14 @@ namespace mcc
             catch (SingularMatrixException) {
               std::cout << indent << "Caught singular matrix for spline" << std::endl;
               // Add another neighboring point and try the spline calculation again.
-              regions->addNeighborPointsToCurrentRegion(1);
+
+              // Add neighboring points needs to be written in terms of grid location.
+
+              regions->getPointsAndCellsForCell(cell, 1, points, cells);
 
               // A safety check to prevent an endless loop from consuming all the
               // point cloud.
-              if (region->points().size() >= 300)
+              if (points.size() >= 300)
                 throw;  // Bail
             }
           }

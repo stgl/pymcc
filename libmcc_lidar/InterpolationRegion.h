@@ -31,15 +31,6 @@ namespace mcc
 
     InterpolationRegion();
 
-    // IInterpolationReigon interface
-    const std::vector<const IPoint *> & points() const;
-    const std::vector<Cell> & cells() const;
-
-    // Shared by all instances to save memory
-    static std::vector<const IPoint *> pointList;  // for computing spline; may
-                                                   // include points from
-                                                   // neighboring regions
-    static std::vector<Cell> cellList;
   };
 
   //---------------------------------------------------------------------------
@@ -50,21 +41,6 @@ namespace mcc
   {
   }
 
-  //---------------------------------------------------------------------------
-
-  inline
-  const std::vector<const IPoint *> & InterpolationRegion::points() const
-  {
-    return pointList;
-  }
-
-  //---------------------------------------------------------------------------
-
-  inline
-  const std::vector<Cell> & InterpolationRegion::cells() const
-  {
-    return cellList;
-  }
 }
 
 #endif

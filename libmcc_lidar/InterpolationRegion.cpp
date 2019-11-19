@@ -16,7 +16,5 @@
 
 namespace mcc
 {
-  std::vector<const IPoint *> InterpolationRegion::pointList;
 
-  std::vector<Cell> InterpolationRegion::cellList;
 }
