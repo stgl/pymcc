@@ -171,7 +171,6 @@ namespace mcc
 
         const Cell *cell = regions->getNextCell();
         if(!cell) {
-          std::cout << "no region, flushing sstop" << std::endl;
           sstop = 1;
           #pragma omp flush(sstop)
         } else {
@@ -214,7 +213,6 @@ namespace mcc
           //std::cout << "updated progress bar" << std::endl;
         }
         /* When sstop=1, most threads continue to this statment */
-        printf("Thread %d, iteration %d, sstop=%d\n",tn,tj,sstop);
       }
     }
 
