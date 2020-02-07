@@ -47,34 +47,14 @@ namespace mcc
   int lastPointSelected = 0;
 
   // A point selector that selects every point.
-  bool useEveryPoint(const IPoint & point, double scaleFactor)
+  bool useEveryPoint(const IPoint & point)
   {
     return true;
   }
 
-  bool useEqualInterval(const IPoint & point, double scaleFactor) {
-    pointIncrement++;
-    if(float(pointIncrement)/scaleFactor >= double(lastPointSelected)) {
-      lastPointSelected = pointIncrement;
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  bool useRandomSampling(const IPoint &point, double scaleFactor) {
-    if(float( rand() % 100000)/100000.0f <= (1.0f / scaleFactor)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   //---------------------------------------------------------------------------
 
-  SurfaceInterpolation::SurfaceInterpolation(const double pointDensityScaleFactor, subSamplingType sampling) :
-    pointDensityScaleFactor_(pointDensityScaleFactor),
-    sampling_(sampling),
+  SurfaceInterpolation::SurfaceInterpolation() :
     prevCellResolution_(0)
   {
   }
@@ -85,16 +65,8 @@ namespace mcc
                                                                      double               cellResolution,
                                                                      double               tension)
   {
-    if(sampling_ == EQUAL_INTERVAL) {
-      std::cout << "Using qqual interval sampling." << std::endl;
-      return this->operator()(points, &useEqualInterval, cellResolution, tension);
-    } else if(sampling_ == RANDOM) {
-      std::cout << "Using random sampling" << std::endl;
-      return this->operator()(points, &useRandomSampling, cellResolution, tension);
-    } else {
       std::cout << "Using all points." << std::endl;
       return this->operator()(points, &useEveryPoint, cellResolution, tension);
-    }
   }
 
   //---------------------------------------------------------------------------
@@ -137,7 +109,7 @@ namespace mcc
 
     // Determine where splines will be interpolated for the points and the
     // raster.
-    boost::shared_ptr<IRegionGenerator> regions = boost::make_shared<DisjointRegions>(pointDensityScaleFactor_);
+    boost::shared_ptr<IRegionGenerator> regions = boost::make_shared<DisjointRegions>();
     int nRegions = regions->subdivide(points, pointSelector, *rasterSurface_);
 
     rasterSurface_->setNoDataValue(-9999);

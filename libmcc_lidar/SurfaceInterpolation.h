@@ -31,7 +31,7 @@ namespace mcc
   class SurfaceInterpolation : public ISurfaceInterpolation
   {
     public:
-      SurfaceInterpolation(const double pointDensityScaleFactor, subSamplingType sampling);
+      SurfaceInterpolation();
 
       // Set the bounding box around all the point data read into the program.
       void setXyExtent(const XyExtent & xyExtent);
@@ -52,8 +52,6 @@ namespace mcc
       XyExtent inputExtent_;
       double prevCellResolution_;
       boost::shared_ptr<RasterSurface> rasterSurface_;
-      double pointDensityScaleFactor_;
-      subSamplingType sampling_;
   };
 
   //---------------------------------------------------------------------------

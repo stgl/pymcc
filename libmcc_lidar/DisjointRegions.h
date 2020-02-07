@@ -31,7 +31,7 @@ namespace mcc
   class DisjointRegions: public IRegionGenerator
   {
     public:
-      DisjointRegions(const double pointDensityScaleFactor);
+      DisjointRegions();
 
       int subdivide(const IPointVector &  points,
                     PointSelector         pointSelector,
@@ -52,7 +52,6 @@ namespace mcc
              RegionIteration_Done } iterationState_;
       unsigned int currentRegionRow_;
       unsigned int currentRegionColumn_;
-      double pointDensityScaleFactor_;
   };
 }
 

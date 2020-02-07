@@ -32,10 +32,8 @@
 namespace mcc
 {
 
-  DisjointRegions::DisjointRegions(const double pointDensityScaleFactor)
-    : iterationState_(RegionIteration_Done),
-    pointDensityScaleFactor_(pointDensityScaleFactor)
-  {
+  DisjointRegions::DisjointRegions()
+    : iterationState_(RegionIteration_Done)  {
   }
 
   //---------------------------------------------------------------------------
@@ -207,8 +205,7 @@ namespace mcc
     // Subdivide the raster's area into non-overlapping regions.  The goal is
     // to have approximately the same # of points in each region.
 
-    int desiredPtsPerRegionWithScale = round(pointDensityScaleFactor_ *  desiredPtsPerRegion);
-    int desiredNumRegions = points.count() / desiredPtsPerRegionWithScale;
+    int desiredNumRegions = points.count() / desiredPtsPerRegion;
       // Rounding down because one less region means possibly more pts per
       // region.
 
@@ -247,7 +244,7 @@ namespace mcc
     // Sort points into the regions
     BOOST_FOREACH(const IPoint & point, points) {
       Cell cell = regions_->getCell(point.x(), point.y());
-      if ((*pointSelector)(point, pointDensityScaleFactor_))
+      if ((*pointSelector)(point))
         (*regions_)[cell].pts.push_back(& point);
       else
         (*regions_)[cell].nPtsNotSelected++;
@@ -402,11 +399,10 @@ namespace mcc
     int nPointsLeftInOuterRing = 0;
     int indexNextAvailableNeighbor = 0;
     unsigned int nSelectedPts = points.size();
-    int desiredPtsPerRegionWithScale = round(pointDensityScaleFactor_ *  desiredPtsPerRegion);
 
-    while (nSelectedPts < desiredPtsPerRegionWithScale) {
+    while (nSelectedPts < desiredPtsPerRegion) {
 
-      addNeighborPointsToRegionWithCell(*regions_, *cell, points, desiredPtsPerRegionWithScale - nSelectedPts,
+      addNeighborPointsToRegionWithCell(*regions_, *cell, points, desiredPtsPerRegion - nSelectedPts,
         indexNextAvailableNeighbor, neighborPts, neighborhoodSize, nPointsLeftInOuterRing);
       nSelectedPts = points.size();
 
