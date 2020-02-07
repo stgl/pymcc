@@ -54,9 +54,7 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
   //unsigned p = control_points.size();
 
   // Allocate the matrix and vector
-  std::cout << "SPLINE " << id_number << ": Allocating TPS matrix L... ";
   matrix<double> mtx_l(p+3, p+3);
-  std::cout << "done." << std::endl;
   //matrix<double> mtx_v(p+3, 1);
   //matrix<double> mtx_orig_k(p, p);
 
@@ -65,7 +63,6 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
   //
   // K is symmetrical so we really have to
   // calculate only about half of the coefficients.
-  std::cout << "SPLINE " << id_number << ":  Filling upper triangle of L... ";
   double a = 0.0;
   for ( unsigned i=0; i<p; ++i )
   {
@@ -82,10 +79,8 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
     }
   }
   a /= (double)(p*p);
-  std::cout << "done." << std::endl;
 
   // Fill the rest of L
-  std::cout << "SPLINE " << id_number << ":  Filling rest of L... ";
   for ( unsigned i=0; i<p; ++i )
   {
     // diagonal: reqularization parameters (lambda * a^2)
@@ -106,34 +101,26 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
   for ( unsigned i=p; i<p+3; ++i )
     for ( unsigned j=p; j<p+3; ++j )
       mtx_l(i,j) = 0.0;
-  std::cout << "done." << std::endl;
 
 
   // Fill the right hand vector V
-  std::cout << "SPLINE " << id_number << ":  Filling TPS vector V... ";
   for ( unsigned i=0; i<p; ++i )
     mtx_v(i,0) = control_points[i].y;
   mtx_v(p+0, 0) = mtx_v(p+1, 0) = mtx_v(p+2, 0) = 0.0;
-  std::cout << "done." << std::endl;
 
   // Solve the linear system "inplace"
-  std::cout << "SPLINE " << id_number << ":  Solving system of equations... ";
   if (0 != LU_Solve(mtx_l, mtx_v))
   {
     throw SingularMatrixError();
   }
-  std::cout << "done." << std::endl;
 }
 
 //-----------------------------------------------------------------------------
 
 double tpsdemo::Spline::interpolate_height(double x, double z) const
 {
-  std::cout << "Initializing h vector... ";
   double h = mtx_v(p+0, 0) + mtx_v(p+1, 0)*x + mtx_v(p+2, 0)*z;
-  std::cout << "done." << std::endl;
 
-  std::cout << "Calcuating h from cell points... ";
   Vec pt_i, pt_cur(x,0,z);
   for ( unsigned i=0; i<p; ++i )
   {
@@ -141,7 +128,6 @@ double tpsdemo::Spline::interpolate_height(double x, double z) const
     pt_i.y = 0;
     h += mtx_v(i,0) * tps_base_func( ( pt_i - pt_cur ).len());
   }
-  std::cout << "done." << std::endl;
   return h;
 }
 
@@ -149,11 +135,9 @@ double tpsdemo::Spline::interpolate_height(double x, double z) const
 
 double tpsdemo::Spline::compute_bending_energy() const
 {
-  std::cout << "Computing bending energy... ";
   matrix<double> w( p, 1 );
   for ( unsigned i=0; i<p; ++i )
     w(i,0) = mtx_v(i,0);
   matrix<double> be = prod( prod<matrix<double> >( trans(w), mtx_orig_k ), w );
-  std::cout << "done." << std::endl;
   return be(0,0);
 }

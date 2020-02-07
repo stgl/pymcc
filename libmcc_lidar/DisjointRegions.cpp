@@ -245,7 +245,6 @@ namespace mcc
     LineIndent indent("  ");
 
     // Sort points into the regions
-    std::cout << indent << "Sorting points into regions..." << std::endl;
     BOOST_FOREACH(const IPoint & point, points) {
       Cell cell = regions_->getCell(point.x(), point.y());
       if ((*pointSelector)(point, pointDensityScaleFactor_))
@@ -350,7 +349,6 @@ namespace mcc
         assert(iterationState_ == RegionIteration_Done);
         return 0;
     }
-    std::cout << "current row: " << currentRegionRow_ << ", current column: " << currentRegionColumn_ << std::endl;
 
     return new Cell(regions_->getCell(currentRegionRow_, currentRegionColumn_));
 
@@ -413,12 +411,11 @@ namespace mcc
       nSelectedPts = points.size();
 
     }
-    
+
     if(nExtraPoints > 0) {
       addNeighborPointsToRegionWithCell(*regions_, *cell, points, nExtraPoints,indexNextAvailableNeighbor,
         neighborPts, neighborhoodSize, nPointsLeftInOuterRing);
     }
-    std::cout << "Points in region: " << region->pts.size() << std::endl;
 
     cells.clear();
     const CellBlock & cellBlock = region->cellBlock;
