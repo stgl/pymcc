@@ -19,10 +19,13 @@
 
 #include <cmath>
 #include <iostream>
+#include <stdlib.h>
 
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/shared_ptr.hpp>
+#include <omp.h>
+
 
 #include "DisjointRegions.h"
 #include "IInterpolationRegion.h"
@@ -39,6 +42,10 @@
 
 namespace mcc
 {
+
+  int pointIncrement = 0;
+  int lastPointSelected = 0;
+
   // A point selector that selects every point.
   bool useEveryPoint(const IPoint & point)
   {
@@ -47,8 +54,8 @@ namespace mcc
 
   //---------------------------------------------------------------------------
 
-  SurfaceInterpolation::SurfaceInterpolation()
-    : prevCellResolution_(0)
+  SurfaceInterpolation::SurfaceInterpolation() :
+    prevCellResolution_(0)
   {
   }
 
@@ -58,7 +65,8 @@ namespace mcc
                                                                      double               cellResolution,
                                                                      double               tension)
   {
-    return this->operator()(points, &useEveryPoint, cellResolution, tension);
+      std::cout << "Using all points." << std::endl;
+      return this->operator()(points, &useEveryPoint, cellResolution, tension);
   }
 
   //---------------------------------------------------------------------------
@@ -112,36 +120,77 @@ namespace mcc
     // heights for its cells.
     std::cout << indent << "Computing splines for regions and cell heights for raster surface:" << std::endl
               << indent << "  ";
-    ProgressBar progressBar(std::cout, nRegions);
+    //ProgressBar progressBar(std::cout, nRegions);
     int nSplinesComputed = 0;
-    while (const IInterpolationRegion * region = regions->getNextRegion()) {
-      bool splineComputed = false;
-      while (! splineComputed) {
-        try {
-          RegularizedSpline spline(region->points(), 0.0);
-          splineComputed = true;
-	  std::vector<Cell> cells = region->cells();
 
-	  #pragma omp parallel for
-	  for(std::vector<Cell>::size_type i = 0; i < cells.size(); i++) {
-	    (*rasterSurface_)[cells[i]] = spline.interpolateHeight(cells[i].x(), cells[i].y());
-	  }
- 
-        }
-        catch (SingularMatrixException) {
-          // Add another neighboring point and try the spline calculation again.
-          regions->addNeighborPointsToCurrentRegion(1);
+    int sj, sstop, tn, tj;
 
-          // A safety check to prevent an endless loop from consuming all the
-          // point cloud.
-          if (region->points().size() >= 300)
-            throw;  // Bail
+    sj = -1;     // shared loop counter
+    sstop = 0;   // shared stopping condition
+    const IInterpolationRegion *region; // Region, declared as private below
+
+    #pragma omp parallel private(tn,tj,region)
+    {
+      tn = omp_get_thread_num();
+      while (!sstop)
+      {
+        /* Threads update the shared counter by turns */
+        #pragma omp critical
+        {
+          sj++;      // increment the shared loop counter...
+          tj = sj;   // ...and keep a private copy of it
         }
+
+        const Cell *cell = regions->getNextCell();
+        if(!cell) {
+          sstop = 1;
+          #pragma omp flush(sstop)
+        } else {
+          region = regions->getRegionForCell(cell);
+          bool splineComputed = false;
+          while (! splineComputed) {
+            try {
+              std::vector<const IPoint *> points;
+              std::vector<Cell> cells;
+              regions->getPointsAndCellsForCell(cell, 0, points, cells);
+              if(points.size() >= 3) {
+                RegularizedSpline spline(points, 0.0);
+                splineComputed = true;
+
+            	  for(std::vector<Cell>::size_type i = 0; i < cells.size(); i++) {
+            	    (*rasterSurface_)[cells[i]] = spline.interpolateHeight(cells[i].x(), cells[i].y());
+            	  }
+              } else {
+                std::cout << "did not compute. Fewer than 3 points." << std::endl;
+              }
+            }
+            catch (SingularMatrixException) {
+              std::cout << indent << "Caught singular matrix for spline" << std::endl;
+              // Add another neighboring point and try the spline calculation again.
+
+              // Add neighboring points needs to be written in terms of grid location.
+              std::vector<const IPoint *> points;
+              std::vector<Cell> cells;
+              regions->getPointsAndCellsForCell(cell, 1, points, cells);
+
+              // A safety check to prevent an endless loop from consuming all the
+              // point cloud.
+              if (points.size() >= 300)
+                throw;  // Bail
+            }
+          }
+          nSplinesComputed++;
+          //std::cout << "updating progress bar" << std::endl;
+          //progressBar.update(nSplinesComputed);
+          //std::cout << "updated progress bar" << std::endl;
+        }
+        /* When sstop=1, most threads continue to this statment */
       }
-      nSplinesComputed++;
-      progressBar.update(nSplinesComputed);
     }
+
     std::cout << std::endl;
+
+    std::cout << "returning from interpolation." << std::endl;
 
     return rasterSurface_;
   }

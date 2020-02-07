@@ -1,6 +1,8 @@
 #ifndef PYMCCP_H
 #define PYMCCP_H
 
+#include "mcc.h"
+
 typedef signed int int32_t;
 
 int * pymcc_classify(double *x, double *y, double *z, int32_t n, double scaleDomain2Spacing, double curvatureThreshold);

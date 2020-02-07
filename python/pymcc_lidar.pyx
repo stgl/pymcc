@@ -28,7 +28,7 @@ def classify(np.ndarray[double, ndim=2, mode='c'] xyz not None,
 
     with nogil:
         classification = pymcc_classify(x, y, z, n, resolution, thresh);
-  
+
     cdef np.ndarray[int32_t, ndim=1] np_classification = np.empty(n, dtype=np.int32);
     for i in range(n):
         np_classification[i] = classification[i]
@@ -38,7 +38,7 @@ def classify(np.ndarray[double, ndim=2, mode='c'] xyz not None,
 
 def calculate_excess_height(np.ndarray[double, ndim=2, mode='c'] xyz not None,
                             scaleDomainSpacing not None):
-  
+
     m_xyz = xyz.shape[0]
     n_xyz = xyz.shape[1]
 

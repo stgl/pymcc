@@ -21,6 +21,7 @@
 #include "PointSelector.h"
 #include "RasterSurface.h"
 #include "XyExtent.h"
+#include "./include/enums.h"
 
 namespace mcc
 {

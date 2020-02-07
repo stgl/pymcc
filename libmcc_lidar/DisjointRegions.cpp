@@ -31,9 +31,9 @@
 
 namespace mcc
 {
+
   DisjointRegions::DisjointRegions()
-    : iterationState_(RegionIteration_Done)
-  {
+    : iterationState_(RegionIteration_Done)  {
   }
 
   //---------------------------------------------------------------------------
@@ -124,6 +124,8 @@ namespace mcc
   // Get the neighboring region to a particular region (specified by its cell).
   // If the relative location of the neighbor is outside the grid of regions,
   // 0 is returned.
+
+
   const InterpolationRegion * getNeighbor(Grid<InterpolationRegion> &  regions,
                                           const Cell &                 cell,
                                           const RelativeLocation       neighborLocation)
@@ -201,7 +203,7 @@ namespace mcc
                                  const RasterSurface & raster)
   {
     // Subdivide the raster's area into non-overlapping regions.  The goal is
-    // to have approximately the same # of points in each region. 
+    // to have approximately the same # of points in each region.
 
     int desiredNumRegions = points.count() / desiredPtsPerRegion;
       // Rounding down because one less region means possibly more pts per
@@ -223,13 +225,13 @@ namespace mcc
     int nRows = int(std::floor(rasterHeight / desiredRegionSize));
 	if (nRows > int(raster.rows())){
 		nRows = int(raster.rows());
-	} 
+	}
     double regionHeight = rasterHeight / nRows;
 
     int nColumns = int(std::floor(rasterWidth / desiredRegionSize));
 	if (nColumns > int(raster.columns())){
 		nColumns = int(raster.columns());
-	} 
+	}
     double regionWidth = rasterWidth / nColumns;
 
     // Create the 2-d arry of InterpolationRegion (nRows, nColumns)
@@ -240,7 +242,6 @@ namespace mcc
     LineIndent indent("  ");
 
     // Sort points into the regions
-    std::cout << indent << "Sorting points into regions..." << std::endl;
     BOOST_FOREACH(const IPoint & point, points) {
       Cell cell = regions_->getCell(point.x(), point.y());
       if ((*pointSelector)(point))
@@ -291,7 +292,7 @@ namespace mcc
           }
         } else {
           // Case (B) - moved down into new region row, so scan across region
-          // columns, copying the cell block widths from the regions in the 
+          // columns, copying the cell block widths from the regions in the
           // top region row into their corresponding regions of the current
           // region row.
           regionRow += down(1);
@@ -315,34 +316,7 @@ namespace mcc
     return nRows * nColumns;
   }
 
-  //---------------------------------------------------------------------------
-
-  // Variables with information about the current region
-
-  // The current region's cell in the grid of regions.
-  Cell currentRegionCell(XYCoordinates(0,0), 0, 0);
-
-  // The current size of the neighborhood of the current region, from which
-  // points are being used for the region's spline calculation.  Neighborhood
-  // size is NxN where N is odd, i.e., 1x1 (for the region itself), 3x3, 5x5,
-  // etc.
-  int neighborhoodSize;
-
-  // List of points from the outer ring of the region's neighborhood.
-  std::vector<NeighborPoint> neighborPts;
-
-  // The number of neighboring points left in the outer ring that have not yet
-  // been added to the current region's set of points for spline calculation.
-  int nPointsLeftInOuterRing;
-
-  // The location in the list of the neighboring points from the outer ring of
-  // the next available point that can be added to the current region's set of
-  // points.
-  int indexNextAvailableNeighbor;
-
-  //---------------------------------------------------------------------------
-
-  const IInterpolationRegion * DisjointRegions::getNextRegion()
+  const Cell* DisjointRegions::getNextCell()
   {
     switch (iterationState_) {
       case RegionIteration_Initialized :
@@ -373,51 +347,32 @@ namespace mcc
         return 0;
     }
 
-    InterpolationRegion * currentRegion = &( (*regions_)(currentRegionRow_, currentRegionColumn_) );
-    currentRegionCell = regions_->getCell(currentRegionRow_, currentRegionColumn_);
+    return new Cell(regions_->getCell(currentRegionRow_, currentRegionColumn_));
 
-    // Determine the full list of points for current region's spline calculation.
-    // Get points from neighboring regions if the region has less than the desired
-    // # of selected points.
-    InterpolationRegion::pointList = currentRegion->pts;
-
-    neighborhoodSize = 1;
-    neighborPts.clear();
-    nPointsLeftInOuterRing = 0;
-
-    unsigned int nSelectedPts = currentRegion->pts.size();
-    if (nSelectedPts < desiredPtsPerRegion) {
-      addNeighborPointsToCurrentRegion(desiredPtsPerRegion - nSelectedPts);
-    }
-
-    // Compute the cell list for the current region
-    InterpolationRegion::cellList.clear();
-
-    const CellBlock & cellBlock = currentRegion->cellBlock;
-    const Cell & upperLeftCell = cellBlock.upperLeftCell;
-    unsigned int blockTop    = upperLeftCell.row();
-    unsigned int blockBottom = blockTop + down(cellBlock.height - 1);
-    unsigned int blockLeft   = upperLeftCell.column();
-    unsigned int blockRight  = blockLeft + right(cellBlock.width - 1);
-
-    BOOST_FOREACH(unsigned int row, Sequence<unsigned int>(blockTop, blockBottom)) {
-      BOOST_FOREACH(unsigned int column, Sequence<unsigned int>(blockLeft, blockRight)) {
-        InterpolationRegion::cellList.push_back(raster_->getCell(row, column));
-      }
-    }
-    return currentRegion;
   }
 
-  //---------------------------------------------------------------------------
+  const InterpolationRegion * DisjointRegions::getRegionForCell(const Cell *cell)
+  {
+    unsigned int row = cell->row();
+    unsigned int column = cell->column();
 
-  void DisjointRegions::addNeighborPointsToCurrentRegion(int nPoints)
+    return &( (*regions_)(row, column) );
+
+  }
+
+    //---------------------------------------------------------------------------
+
+  void addNeighborPointsToRegionWithCell(Grid<InterpolationRegion> &  regions,
+		  const Cell & cell, std::vector<const IPoint *> &points, int nPoints,
+    int &indexNextAvailableNeighbor, std::vector<NeighborPoint> &neighborPts,
+    int &neighborhoodSize, int &nPointsLeftInOuterRing)
   {
     while (nPoints > 0) {
       while (nPointsLeftInOuterRing == 0) {
         // Expand the neighborhood, and get points from the new outer ring.
         neighborPts.clear();
         neighborhoodSize += 2;  // first 3x3, then 5x5, 7x7, ...
-        getPointsFromOuterRing(*regions_, currentRegionCell, neighborhoodSize, neighborPts);
+        getPointsFromOuterRing(regions, cell, neighborhoodSize, neighborPts);
         nPointsLeftInOuterRing = neighborPts.size();
         std::sort(neighborPts.begin(), neighborPts.begin());
         indexNextAvailableNeighbor = 0;
@@ -426,10 +381,51 @@ namespace mcc
       int nPtsToAdd = (nPointsLeftInOuterRing < nPoints) ? nPointsLeftInOuterRing : nPoints;
       std::for_each(neighborPts.begin() + indexNextAvailableNeighbor,
                     neighborPts.begin() + indexNextAvailableNeighbor + nPtsToAdd,
-                    AppendPoint(InterpolationRegion::pointList));
+                    AppendPoint(points));
       indexNextAvailableNeighbor += nPtsToAdd;
       nPointsLeftInOuterRing -= nPtsToAdd;
       nPoints -= nPtsToAdd;
     }
   }
+
+  void DisjointRegions::getPointsAndCellsForCell(const Cell *cell, int nExtraPoints,
+    std::vector<const IPoint *> &points, std::vector<Cell> &cells)
+  {
+    const InterpolationRegion *region = getRegionForCell(cell);
+    points = region->pts;
+    int neighborhoodSize = 1;
+    std::vector<NeighborPoint> neighborPts;
+    neighborPts.clear();
+    int nPointsLeftInOuterRing = 0;
+    int indexNextAvailableNeighbor = 0;
+    unsigned int nSelectedPts = points.size();
+
+    while (nSelectedPts < desiredPtsPerRegion) {
+
+      addNeighborPointsToRegionWithCell(*regions_, *cell, points, desiredPtsPerRegion - nSelectedPts,
+        indexNextAvailableNeighbor, neighborPts, neighborhoodSize, nPointsLeftInOuterRing);
+      nSelectedPts = points.size();
+
+    }
+
+    if(nExtraPoints > 0) {
+      addNeighborPointsToRegionWithCell(*regions_, *cell, points, nExtraPoints,indexNextAvailableNeighbor,
+        neighborPts, neighborhoodSize, nPointsLeftInOuterRing);
+    }
+
+    cells.clear();
+    const CellBlock & cellBlock = region->cellBlock;
+    const Cell & upperLeftCell = cellBlock.upperLeftCell;
+    unsigned int blockTop    = upperLeftCell.row();
+    unsigned int blockBottom = blockTop + down(cellBlock.height - 1);
+    unsigned int blockLeft   = upperLeftCell.column();
+    unsigned int blockRight  = blockLeft + right(cellBlock.width - 1);
+
+    BOOST_FOREACH(unsigned int row, Sequence<unsigned int>(blockTop, blockBottom)) {
+      BOOST_FOREACH(unsigned int column, Sequence<unsigned int>(blockLeft, blockRight)) {
+        cells.push_back(raster_->getCell(row, column));
+      }
+    }
+  }
+
 }

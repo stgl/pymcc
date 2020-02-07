@@ -49,6 +49,8 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
   if ( control_points.size() < 3 )
     throw std::runtime_error("need at least 3 points for thin plate spline");
 
+  int id_number = rand() % 1000;
+
   //unsigned p = control_points.size();
 
   // Allocate the matrix and vector
@@ -118,6 +120,7 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
 double tpsdemo::Spline::interpolate_height(double x, double z) const
 {
   double h = mtx_v(p+0, 0) + mtx_v(p+1, 0)*x + mtx_v(p+2, 0)*z;
+
   Vec pt_i, pt_cur(x,0,z);
   for ( unsigned i=0; i<p; ++i )
   {

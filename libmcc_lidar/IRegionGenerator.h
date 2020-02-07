@@ -37,11 +37,12 @@ namespace mcc
                             const RasterSurface & raster) = 0;
 
       // Return the next region.  If no more regions, then returns 0.
-      virtual const IInterpolationRegion * getNextRegion() = 0;
-
+      virtual const Cell *getNextCell() = 0;
+      virtual const IInterpolationRegion *getRegionForCell(const Cell *cell) = 0;
+      virtual void getPointsAndCellsForCell(const Cell *cell, int nExtraPoints,
+        std::vector<const IPoint *> &points, std::vector<Cell> &cells) = 0;
       // Add points from neighboring regions to the current region (i.e., the
       // region returned by getNextRegion).
-      virtual void addNeighborPointsToCurrentRegion(int nPoints) = 0;
 
       virtual ~IRegionGenerator() { }
   };

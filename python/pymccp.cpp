@@ -1,5 +1,4 @@
 #include "pymccp.h"
-#include "mcc.h"
 #include <iostream>
 #include <boost/cstdint.hpp>
 

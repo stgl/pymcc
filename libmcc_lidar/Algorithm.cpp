@@ -129,6 +129,7 @@ namespace mcc
           nongroundPtsFile.open(boost::str(fileName % SD % pass));
         }
         nPoints = U.count();
+        std::cout << "Number of Points: " << nPoints << std::endl;
         BOOST_FOREACH( IPoint & point, U) {
           Coordinate surfaceHeight = (*rasterSurface)(point.x(), point.y());
           if (point.z() > surfaceHeight + t[SD]) {

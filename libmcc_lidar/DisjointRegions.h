@@ -37,9 +37,12 @@ namespace mcc
                     PointSelector         pointSelector,
                     const RasterSurface & raster);
 
-      const IInterpolationRegion * getNextRegion();
+      const Cell *getNextCell();
 
-      void addNeighborPointsToCurrentRegion(int nPoints);
+      //const IInterpolationRegion * getNextRegion();
+      const InterpolationRegion *getRegionForCell(const Cell *cell);
+      void getPointsAndCellsForCell(const Cell *cell, int nExtraPoints,
+        std::vector<const IPoint *> &points, std::vector<Cell> &cells);
 
     private:
       boost::shared_ptr< Grid<InterpolationRegion> > regions_;
