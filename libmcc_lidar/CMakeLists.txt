@@ -39,6 +39,12 @@ endif()
 set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR} ${CMAKE_MODULE_PATH})
 find_package (LibLAS)
 
+if(NOT LibLAS_FOUND)
+  message("LibLAS not found: Trying libLAS for compatibility.")
+  find_package(libLAS)
+endif()
+
+
 link_directories ( ${Boost_LIBRARY_DIRS} )
 include_directories ( ${Boost_INCLUDE_DIRS} ${LIBLAS_INCLUDE_DIRS} )
 
@@ -69,8 +75,33 @@ if (MSVC)
   string(REGEX REPLACE "/EHsc" "/EHa" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 endif()
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    message("Using Darwin.")
+    set(MACOSX TRUE)
+endif()
+
 # determine if OpenMP can/should be used
 option(USE_OPENMP "Enable OpenMP?" ON) # set to OFF to disable
+# Find OpenMP
+if(MACOSX AND USE_OPENMP)
+    if(CMAKE_C_COMPILER_ID MATCHES "Clang")
+        set(OpenMP_C "${CMAKE_C_COMPILER}")
+        set(OpenMP_C_FLAGS "-openmp -Wno-unused-command-line-argument")
+        set(OpenMP_C_LIB_NAMES "libomp" "libgomp" "libiomp5")
+        set(OpenMP_libomp_LIBRARY ${OpenMP_C_LIB_NAMES})
+        set(OpenMP_libgomp_LIBRARY ${OpenMP_C_LIB_NAMES})
+        set(OpenMP_libiomp5_LIBRARY ${OpenMP_C_LIB_NAMES})
+    endif()
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+      set(OpenMP_CXX "${CMAKE_CXX_COMPILER}")
+      set(OpenMP_CXX_FLAGS "-openmp -Wno-unused-command-line-argument")
+      set(OpenMP_CXX_LIB_NAMES "libomp" "libgomp" "libiomp5")
+      set(OpenMP_libomp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
+      set(OpenMP_libgomp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
+      set(OpenMP_libiomp5_LIBRARY ${OpenMP_CXX_LIB_NAMES})
+    endif()
+endif()
+
 if(USE_OPENMP)
  FIND_PACKAGE(OpenMP)
  if(OPENMP_FOUND OR OpenMP_FOUND)
