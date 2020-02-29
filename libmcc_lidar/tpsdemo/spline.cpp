@@ -109,10 +109,14 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
   mtx_v(p+0, 0) = mtx_v(p+1, 0) = mtx_v(p+2, 0) = 0.0;
 
   // Solve the linear system "inplace"
-  if (0 != LU_Solve(mtx_l, mtx_v))
+  int code = LU_Solve(mtx_l, mtx_v);
+  if (code != 0)
   {
     throw SingularMatrixError();
   }
+  // mtx_v = Gauss_Seidel_Solve(mtx_l, mtx_v);
+  // mtx_v = SOR_Solve(mtx_l, mtx_v);
+
 }
 
 //-----------------------------------------------------------------------------
