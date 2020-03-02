@@ -14,32 +14,32 @@
 // 1. a and b do not have the same number of rows
 // 2. a has zero entires on its main diagonal
 //
-template <typename T> int Gauss_Seidel_Solve(
+template <typename T> boost::numeric::ublas::matrix<T> Gauss_Seidel_Solve(
   boost::numeric::ublas::matrix<T>& a,
   boost::numeric::ublas::matrix<T>& b,
   int n_iter)
 {
   
   int nrows = a.size1();
-  boost::numeric::ublas::zero_matrix<T> x(nrows, 1);
-  boost::numeric::ublas::zero_matrix<T> n(nrows, 1);
+  boost::numeric::ublas::matrix<T> x(nrows, 1);
+  boost::numeric::ublas::matrix<T> n(nrows, 1);
 
   if (a.size1() != b.size1())
-    throw SingularMatrixError();
+    throw tpsdemo::SingularMatrixError();
 
   // Check singluarity
-  for (int j = 0; j < n; ++j)
-    if (a(j,j) == 0)
-      throw SingularMatrixError();
+  for (int j = 0; j < nrows; ++j)
+    if (a(j, j) == 0)
+      throw tpsdemo::SingularMatrixError();
 
   while (n_iter > 0) {
-    for (i = 0; i < nrows; i++) {
-      n[i] = (b[i] / a(i,i));
-      for (j = 0; j < nrows; j++) {
+    for (int i = 0; i < nrows; i++) {
+      n(i, 1) = (b(i, 1) / a(i,i));
+      for (int j = 0; j < nrows; j++) {
         if (j == i)
           continue;
-        n[i] = n[i] - ((a(i,j) / a(i,i)) * x[j]);
-        x[i] = n[i];
+        n(i, 1) = n(i, 1) - ((a(i,j) / a(i,i)) * x(j, 1));
+        x(i, 1) = n(i, 1);
       }
     }
     n_iter--;
@@ -48,7 +48,7 @@ template <typename T> int Gauss_Seidel_Solve(
   return x;
 }
 
-// Solve a linear system a*x=b using Successive Overrelaxation 
+// Solve a linear system a*x=b using Successive Overrelaxation
 //
 // Returns the solution vector x
 //
@@ -56,7 +56,9 @@ template <typename T> int Gauss_Seidel_Solve(
 // 1. a and b do not have the same number of rows
 // 2. a has zero entires on its main diagonal
 //
-template <typename T> int SOR_Solve(
+// TODO: Implement this
+//
+template <typename T> boost::numeric::ublas::matrix<T> SOR_Solve(
   boost::numeric::ublas::matrix<T>& a,
   boost::numeric::ublas::matrix<T>& b,
   int n_iter,
@@ -64,25 +66,26 @@ template <typename T> int SOR_Solve(
 {
   
   int nrows = a.size1();
-  boost::numeric::ublas::zero_matrix<T> x(nrows, 1);
-  boost::numeric::ublas::zero_matrix<T> x_new(nrows, 1);
+  boost::numeric::ublas::matrix<T> x(nrows, 1);
+  boost::numeric::ublas::matrix<T> x_new(nrows, 1);
 
   if (a.size1() != b.size1())
-    throw SingularMatrixError();
+    throw tpsdemo::SingularMatrixError();
 
   // Check singluarity
-  for (int j = 0; j < n; ++j)
-    if (a(j,j) == 0)
-      throw SingularMatrixError();
+  for (int j = 0; j < nrows; ++j)
+    if (a(j, j) == 0)
+      throw tpsdemo::SingularMatrixError();
 
   while (n_iter > 0) {
-    for (i = 0; i < nrows; i++) {
-      x_new[i] = (b[i] / a(i,i));
-      for (j = 0; j < nrows; j++) {
+    for (int i = 0; i < nrows; i++) {
+      x_new(i, 1) = (b(i, 1) / a(i,i));
+      for (int j = 0; j < nrows; j++) {
         if (j == i)
           continue;
-        x_new[i] = x_new[i] - ((a(i,j) / a(i,i)) * x[j]);
         // TODO: Implement SOR weighted update
+        x_new(i, 1) = x_new(i, 1) - ((a(i,j) / a(i,i)) * x(j, 1));
+        x(i, 1) = x_new(i, 1);
       }
     }
     // TODO: Convergence condition?
