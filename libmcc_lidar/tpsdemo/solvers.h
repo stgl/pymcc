@@ -19,6 +19,7 @@ template <typename T> boost::numeric::ublas::matrix<T> Gauss_Seidel_Solve(
   boost::numeric::ublas::matrix<T>& b,
   int n_iter)
 {
+  std::cout << "SOLVER: Gauss-Seidel" << std::endl;
   
   int nrows = a.size1();
   boost::numeric::ublas::matrix<T> x(nrows, 1);
@@ -64,6 +65,7 @@ template <typename T> boost::numeric::ublas::matrix<T> SOR_Solve(
   int n_iter,
   double w)
 {
+  std::cout << "SOLVER: Successive Overrelaxation" << std::endl;
   
   int nrows = a.size1();
   boost::numeric::ublas::matrix<T> x(nrows, 1);

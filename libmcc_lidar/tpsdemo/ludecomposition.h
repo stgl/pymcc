@@ -30,6 +30,7 @@ template <typename T> int LU_Solve(
   boost::numeric::ublas::matrix<T>& a,
   boost::numeric::ublas::matrix<T>& b )
 {
+  std::cout << "SOLVER: LU Decomposition" << std::endl;
   // This routine is originally based on the public domain draft for JAMA,
   // Java matrix package available at http://math.nist.gov/javanumerics/jama/
 
