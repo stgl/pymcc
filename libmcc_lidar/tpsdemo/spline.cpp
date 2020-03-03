@@ -44,6 +44,7 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
   : p(control_pts.size()),
     control_points(control_pts),
     mtx_v(p+3, 1),
+    //mtx_v(p, 1),
     mtx_orig_k(p, p)
 {
   // You We need at least 3 points to define a plane
@@ -56,6 +57,7 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
 
   // Allocate the matrix and vector
   matrix<double> mtx_l(p+3, p+3);
+  //matrix<double> mtx_l(p, p);
   //matrix<double> mtx_v(p+3, 1);
   //matrix<double> mtx_orig_k(p, p);
 
@@ -84,6 +86,7 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
   // Fill the rest of L
   for ( unsigned i=0; i<p; ++i )
   {
+    // TODO: Select reg. parameter 
     // diagonal: reqularization parameters (lambda * a^2)
     mtx_l(i,i) = mtx_orig_k(i,i) =
       regularization * (a*a);
@@ -98,28 +101,32 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
     mtx_l(p+1, i) = control_points[i].x;
     mtx_l(p+2, i) = control_points[i].z;
   }
+
   // O (3 x 3, lower right)
   for ( unsigned i=p; i<p+3; ++i )
     for ( unsigned j=p; j<p+3; ++j )
       mtx_l(i,j) = 0.0;
-
-
+  
   // Fill the right hand vector V
   for ( unsigned i=0; i<p; ++i )
     mtx_v(i,0) = control_points[i].y;
+
   mtx_v(p+0, 0) = mtx_v(p+1, 0) = mtx_v(p+2, 0) = 0.0;
 
   // Solve the linear system "inplace"
-  /*
-  int code = LU_Solve(mtx_l, mtx_v);
+  int code = 0;
+  //code = LU_Solve(mtx_l, mtx_v);
+
+  // Iterative methods (Not in place)
+  //mtx_v = Gauss_Seidel_Solve(mtx_l, mtx_v, 1000);
+  // mtx_v = SOR_Solve(mtx_l, mtx_v, 1000, 0.5);
+  mtx_v = CG_Solve(mtx_l, mtx_v, 1e-5);
+  
   if (code != 0)
   {
     throw SingularMatrixError();
   }
-  */
-  mtx_v = Gauss_Seidel_Solve(mtx_l, mtx_v, 100);
-  // mtx_v = SOR_Solve(mtx_l, mtx_v, 100, 0.5);
-
+  
 }
 
 //-----------------------------------------------------------------------------
