@@ -119,14 +119,34 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
 
   // Iterative methods (Not in place)
   //mtx_v = Gauss_Seidel_Solve(mtx_l, mtx_v, 1000);
-  // mtx_v = SOR_Solve(mtx_l, mtx_v, 1000, 0.5);
-  mtx_v = CG_Solve(mtx_l, mtx_v, 1e-5);
+  //mtx_v = SOR_Solve(mtx_l, mtx_v, 1000, 0.5);
+  mtx_v = CG_Solve(mtx_l, mtx_v, 1e-10);
   
   if (code != 0)
   {
     throw SingularMatrixError();
   }
-  
+
+  /*
+  // Example (from Wikipedia)
+  std::cout << "TEST" << std::endl;
+  matrix<double> A(2, 2);
+  matrix<double> b(2, 1);
+
+  A(0, 0) = 4;
+  A(0, 1) = 1;
+  A(1, 0) = 1;
+  A(1, 1) = 3;
+
+  b(0, 0) = 1;
+  b(1, 0) = 2;
+
+  matrix<double> x = CG_Solve(A, b, 1e-10);
+  for ( int i = 0; i < 2; ++i) {
+    std::cout << "x[" << i << "] = " << x(i, 0) << std::endl;
+  }
+  // Solution is [0.0909, 0.6364] 
+  */
 }
 
 //-----------------------------------------------------------------------------

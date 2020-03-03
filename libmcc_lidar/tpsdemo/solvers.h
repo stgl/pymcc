@@ -44,7 +44,7 @@ template <typename T> boost::numeric::ublas::matrix<T> CG_Solve(
   }
   //std::cout << "Matrix has " << nzeros << " zero, " << npos << " pos, " << nneg << " neg entries on diagonal" << std::endl;
 
-  vector<T> x(b.size1(), 0);
+  vector<T> x(b.size1(), 0.0);
   vector<T> r(b.size1());
   vector<T> r_old(b.size1());
   vector<T> p(b.size1());
@@ -56,22 +56,27 @@ template <typename T> boost::numeric::ublas::matrix<T> CG_Solve(
   }
   p = r;
 
-  int k = 0;
-
-  while (k < nrows)
-  {
+  for (int i = 0; i < nrows; ++i) {
      r_old = r;                                      // Previous residual
      Ap = prod(a, p);                                // Project onto p
 
      double alpha = inner_prod(r, r) / std::max(inner_prod(p, Ap), EPS);
+     
+     std::cout << "iter: " << i << ", R ip (bef.): " << inner_prod(r, r) << std::endl;
+     
      x = x + alpha * p;                             // Next estimate
      r = r - alpha * Ap;                            // Residual 
 
-     if (norm_2( r ) < tol) break;                  // Test convergence
+     if (norm_2(r) < tol) break;                  // Test convergence
+     
+     std::cout << "iter: " << i << ", R ip (aft.): " << inner_prod(r, r) << std::endl;
+     std::cout << "iter: " << i << ", R_old ip: " << inner_prod(r_old, r_old) << std::endl;
 
      double beta = inner_prod(r, r) / std::max(inner_prod(r_old, r_old), EPS);
+     
+     std::cout << "iter: " << i << ", alpha: " << alpha << ", beta: " << beta << std::endl;
+     
      p = r + beta * p;                              // Next gradient
-     k++;
   }
   
   // TODO: This sucks, but have to type cast for compat with codebase
