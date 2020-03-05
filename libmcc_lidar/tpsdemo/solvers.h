@@ -89,7 +89,6 @@ template <typename T> boost::numeric::ublas::matrix<T> CG_Solve(
   return x_mtx;
 }
 
-
 template <typename T> boost::numeric::ublas::matrix<T> CG_Preconditioner_Solve(
   boost::numeric::ublas::matrix<T> a,
   boost::numeric::ublas::matrix<T> b,
