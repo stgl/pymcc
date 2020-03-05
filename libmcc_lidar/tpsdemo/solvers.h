@@ -89,6 +89,19 @@ template <typename T> boost::numeric::ublas::matrix<T> CG_Solve(
   return x_mtx;
 }
 
+
+template <typename T> boost::numeric::ublas::matrix<T> CG_Preconditioner_Solve(
+  boost::numeric::ublas::matrix<T> a,
+  boost::numeric::ublas::matrix<T> b,
+  boost::numeric::ublas::matrix<T> p,
+  double tol)
+{
+  std::cout << "SOLVER: Conjugate gradient with preconditioning" << std::endl;
+  a = p * a;
+
+  return CG_Solve(a, b, tol);
+}
+
 // Solve a linear system a*x=b using the Gauss Seidel method 
 //
 // Returns the solution vector x
