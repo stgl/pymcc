@@ -19,6 +19,7 @@
 #include "ludecomposition.h"
 #include "solvers.h"
 
+#include <fstream>
 #include <vector>
 #include <cmath>
 
@@ -40,7 +41,7 @@ static double tps_base_func(double r)
  *  Calculate Thin Plate Spline (TPS) weights from
  *  control points.
  */
-tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularization)
+tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularization, int idx)
   : p(control_pts.size()),
     control_points(control_pts),
     mtx_v(p+3, 1),
@@ -113,14 +114,29 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
 
   mtx_v(p+0, 0) = mtx_v(p+1, 0) = mtx_v(p+2, 0) = 0.0;
 
+  std::ofstream dat1("matrix_examples/L" + std::to_string(idx) + ".txt", std::ofstream::out);
+  for (int i=0; i < p+3; ++i) {
+      for (int j=0; j < p+2; ++j) {
+        dat1 << mtx_l(i, j) << ", "; 
+      }
+      dat1 << mtx_l(i, p+3) << std::endl;
+  }
+  dat1.close();
+
+  std::ofstream dat2("matrix_examples/v" + std::to_string(idx) + ".txt", std::ofstream::out);
+  for (int i=0; i < p+3; ++i) {
+    dat2 << mtx_v(i, 0) << ", ";
+  }
+  dat2.close();
+
   // Solve the linear system "inplace"
   int code = 0;
-  //code = LU_Solve(mtx_l, mtx_v);
+  code = LU_Solve(mtx_l, mtx_v);
 
   // Iterative methods (Not in place)
   //mtx_v = Gauss_Seidel_Solve(mtx_l, mtx_v, 1000);
   //mtx_v = SOR_Solve(mtx_l, mtx_v, 1000, 0.5);
-  mtx_v = CG_Solve(mtx_l, mtx_v, 1e-10);
+  //mtx_v = CG_Solve(mtx_l, mtx_v, 1e-10);
   
   if (code != 0)
   {

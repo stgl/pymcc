@@ -154,7 +154,7 @@ namespace mcc
               std::vector<Cell> cells;
               regions->getPointsAndCellsForCell(cell, 0, points, cells);
               if(points.size() >= 3) {
-                RegularizedSpline spline(points, 0.0);
+                RegularizedSpline spline(points, 0.0, nSplinesComputed);
                 splineComputed = true;
 
             	  for(std::vector<Cell>::size_type i = 0; i < cells.size(); i++) {
