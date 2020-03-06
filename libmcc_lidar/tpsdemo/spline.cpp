@@ -114,7 +114,8 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
 
   mtx_v(p+0, 0) = mtx_v(p+1, 0) = mtx_v(p+2, 0) = 0.0;
 
-  std::ofstream dat1("matrix_examples/L" + std::to_string(idx) + ".txt", std::ofstream::out);
+  // Write out input system of eqns
+  std::ofstream dat1("matrix_examples/A" + std::to_string(idx) + ".txt", std::ofstream::out);
   for (int i=0; i < p+3; ++i) {
       for (int j=0; j < p+2; ++j) {
         dat1 << mtx_l(i, j) << ", "; 
@@ -123,10 +124,11 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
   }
   dat1.close();
 
-  std::ofstream dat2("matrix_examples/v" + std::to_string(idx) + ".txt", std::ofstream::out);
-  for (int i=0; i < p+3; ++i) {
+  std::ofstream dat2("matrix_examples/b" + std::to_string(idx) + ".txt", std::ofstream::out);
+  for (int i=0; i < p+2; ++i) {
     dat2 << mtx_v(i, 0) << ", ";
   }
+  dat2 << mtx_v(p+3, 0);
   dat2.close();
 
   // Solve the linear system "inplace"
@@ -142,6 +144,14 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
   {
     throw SingularMatrixError();
   }
+  
+  // Write out Boost solution
+  std::ofstream dat3("matrix_examples/x" + std::to_string(idx) + ".txt", std::ofstream::out);
+  for (int i=0; i < p+2; ++i) {
+    dat3 << mtx_v(i, 0) << ", ";
+  }
+  dat3 << mtx_v(p+3, 0);
+  dat3.close();
 
   /*
   // Example (from Wikipedia)
