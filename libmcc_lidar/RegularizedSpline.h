@@ -34,6 +34,7 @@ namespace mcc
     public:
       RegularizedSpline(const std::vector<const IPoint *> & points,
                         double                              regularization,
+                        int                                 subsampling_factor,
                         int idx);
 
       Coordinate interpolateHeight(Coordinate x,

@@ -22,17 +22,31 @@
 
 mcc::RegularizedSpline::RegularizedSpline(const std::vector<const IPoint *> & points,
                                           double                              regularization,
+                                          int                              subsampling_factor,
                                           int idx)
   : controlPoints_(points.size())
 {
+  
+  if (( points.size() / subsampling_factor ) < 3 ) {
+    subsampling_factor = 1;
+  }
   std::vector<Vec>::size_type i = 0;
+  std::vector<Vec>::size_type j = 0;
   BOOST_FOREACH(const IPoint * point, points) {
     // NOTE: Although the TPS Demo documentation has equations showing the z
     // coordinate as height, its source code treats y coordinate as the height.
     // So we interchange the y and z coordinates as we pass points to it.
-    controlPoints_[i] = Vec(point->x(), point->z(), point->y());
+    if ( i % subsampling_factor == 0 ) {
+      controlPoints_[j] = Vec(point->x(), point->z(), point->y());
+      j++;
+    }
     i++;
   }
+
+  controlPoints_.resize(j);
+
+  std::cout << "Subsampling: Using " << controlPoints_.size() << "/" << points.size() << " points" << std::endl;
+
   try {
     spline_ = boost::shared_ptr<tpsdemo::Spline>(new tpsdemo::Spline(controlPoints_, regularization, idx));
   }
