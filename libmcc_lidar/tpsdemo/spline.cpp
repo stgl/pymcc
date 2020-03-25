@@ -41,7 +41,7 @@ static double tps_base_func(double r)
  *  Calculate Thin Plate Spline (TPS) weights from
  *  control points.
  */
-tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularization, int idx)
+tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularization)
   : p(control_pts.size()),
     control_points(control_pts),
     mtx_v(p+3, 1),
@@ -114,8 +114,9 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
 
   mtx_v(p+0, 0) = mtx_v(p+1, 0) = mtx_v(p+2, 0) = 0.0;
 
+  /*
   // Write out input system of eqns
-  std::ofstream dat1("matrix_examples_subsamp1/A" + std::to_string(idx) + ".txt", std::ofstream::out);
+  std::ofstream dat1("matrix_examples_subsamp10/A" + std::to_string(idx) + ".txt", std::ofstream::out);
   for (int i=0; i < p+3; ++i) {
       for (int j=0; j < p+2; ++j) {
         dat1 << mtx_l(i, j) << ", "; 
@@ -124,12 +125,13 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
   }
   dat1.close();
 
-  std::ofstream dat2("matrix_examples_subsamp1/b" + std::to_string(idx) + ".txt", std::ofstream::out);
+  std::ofstream dat2("matrix_examples_subsamp10/b" + std::to_string(idx) + ".txt", std::ofstream::out);
   for (int i=0; i < p+2; ++i) {
     dat2 << mtx_v(i, 0) << ", ";
   }
   dat2 << mtx_v(p+3, 0);
   dat2.close();
+  i*/
 
   // Solve the linear system "inplace"
   int code = 0;
@@ -145,15 +147,15 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
     throw SingularMatrixError();
   }
   
+  /*
   // Write out Boost solution
-  std::ofstream dat3("matrix_examples_subsamp1/x" + std::to_string(idx) + ".txt", std::ofstream::out);
+  std::ofstream dat3("matrix_examples_subsamp10/x" + std::to_string(idx) + ".txt", std::ofstream::out);
   for (int i=0; i < p+2; ++i) {
     dat3 << mtx_v(i, 0) << ", ";
   }
   dat3 << mtx_v(p+3, 0);
   dat3.close();
 
-  /*
   // Example (from Wikipedia)
   std::cout << "TEST" << std::endl;
   matrix<double> A(2, 2);

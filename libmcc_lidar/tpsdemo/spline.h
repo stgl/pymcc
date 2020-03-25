@@ -27,7 +27,7 @@ namespace tpsdemo
   {
     public:
       // Throws SingularMatrixError if a singular matrix is detected.
-      Spline(const std::vector<Vec> & control_pts, double regularization, int idx);
+      Spline(const std::vector<Vec> & control_pts, double regularization);
 
       double interpolate_height(double x, double z) const;
       double compute_bending_energy() const;

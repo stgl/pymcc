@@ -22,8 +22,7 @@
 
 mcc::RegularizedSpline::RegularizedSpline(const std::vector<const IPoint *> & points,
                                           double                              regularization,
-                                          int                              subsampling_factor,
-                                          int idx)
+                                          int                              subsampling_factor)
   : controlPoints_(points.size())
 {
   
@@ -48,7 +47,7 @@ mcc::RegularizedSpline::RegularizedSpline(const std::vector<const IPoint *> & po
   std::cout << "Subsampling: Using " << controlPoints_.size() << "/" << points.size() << " points" << std::endl;
 
   try {
-    spline_ = boost::shared_ptr<tpsdemo::Spline>(new tpsdemo::Spline(controlPoints_, regularization, idx));
+    spline_ = boost::shared_ptr<tpsdemo::Spline>(new tpsdemo::Spline(controlPoints_, regularization));
   }
   catch (tpsdemo::SingularMatrixError) {
     throw SingularMatrixException(points);
