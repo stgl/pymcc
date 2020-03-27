@@ -154,12 +154,13 @@ namespace mcc
               std::vector<Cell> cells;
               regions->getPointsAndCellsForCell(cell, 0, points, cells);
               if(points.size() >= 3) {
+                // TODO: Don't use magic number (10) here for subsampling factor
                 RegularizedSpline spline(points, 0.0, 10);
                 splineComputed = true;
 
-            	for(std::vector<Cell>::size_type i = 0; i < cells.size(); i++) {
-            	  (*rasterSurface_)[cells[i]] = spline.interpolateHeight(cells[i].x(), cells[i].y());
-            	}
+            	  for(std::vector<Cell>::size_type i = 0; i < cells.size(); i++) {
+            	    (*rasterSurface_)[cells[i]] = spline.interpolateHeight(cells[i].x(), cells[i].y());
+            	  }
               } else {
                 std::cout << "did not compute. Fewer than 3 points." << std::endl;
               }
