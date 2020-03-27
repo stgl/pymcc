@@ -19,7 +19,7 @@
 #include "ludecomposition.h"
 #include "solvers.h"
 
-#include <fstream>
+//#include <fstream>
 #include <vector>
 #include <cmath>
 
@@ -114,6 +114,7 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
 
   mtx_v(p+0, 0) = mtx_v(p+1, 0) = mtx_v(p+2, 0) = 0.0;
 
+  // TODO: Delete this, or uncomment if yoiu want to save output for testing
   /*
   // Write out input system of eqns
   std::ofstream dat1("matrix_examples_subsamp10/A" + std::to_string(idx) + ".txt", std::ofstream::out);
