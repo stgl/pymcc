@@ -154,7 +154,8 @@ namespace mcc
               std::vector<Cell> cells;
               regions->getPointsAndCellsForCell(cell, 0, points, cells);
               if(points.size() >= 3) {
-                RegularizedSpline spline(points, 0.0);
+                // TODO: Don't use magic number (10) here for subsampling factor
+                RegularizedSpline spline(points, 0.0, 10);
                 splineComputed = true;
 
             	  for(std::vector<Cell>::size_type i = 0; i < cells.size(); i++) {
@@ -180,6 +181,7 @@ namespace mcc
             }
           }
           nSplinesComputed++;
+          //std::cout << "Computed spline " << nSplinesComputed << std::endl;
           //std::cout << "updating progress bar" << std::endl;
           //progressBar.update(nSplinesComputed);
           //std::cout << "updated progress bar" << std::endl;

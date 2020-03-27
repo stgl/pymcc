@@ -17,7 +17,9 @@
 
 #include "spline.h"
 #include "ludecomposition.h"
+#include "solvers.h"
 
+//#include <fstream>
 #include <vector>
 #include <cmath>
 
@@ -43,6 +45,7 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
   : p(control_pts.size()),
     control_points(control_pts),
     mtx_v(p+3, 1),
+    //mtx_v(p, 1),
     mtx_orig_k(p, p)
 {
   // You We need at least 3 points to define a plane
@@ -55,6 +58,7 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
 
   // Allocate the matrix and vector
   matrix<double> mtx_l(p+3, p+3);
+  //matrix<double> mtx_l(p, p);
   //matrix<double> mtx_v(p+3, 1);
   //matrix<double> mtx_orig_k(p, p);
 
@@ -83,6 +87,7 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
   // Fill the rest of L
   for ( unsigned i=0; i<p; ++i )
   {
+    // TODO: Select reg. parameter 
     // diagonal: reqularization parameters (lambda * a^2)
     mtx_l(i,i) = mtx_orig_k(i,i) =
       regularization * (a*a);
@@ -97,22 +102,80 @@ tpsdemo::Spline::Spline(const std::vector<Vec> & control_pts, double regularizat
     mtx_l(p+1, i) = control_points[i].x;
     mtx_l(p+2, i) = control_points[i].z;
   }
+
   // O (3 x 3, lower right)
   for ( unsigned i=p; i<p+3; ++i )
     for ( unsigned j=p; j<p+3; ++j )
       mtx_l(i,j) = 0.0;
-
-
+  
   // Fill the right hand vector V
   for ( unsigned i=0; i<p; ++i )
     mtx_v(i,0) = control_points[i].y;
+
   mtx_v(p+0, 0) = mtx_v(p+1, 0) = mtx_v(p+2, 0) = 0.0;
 
+  // TODO: Delete this, or uncomment if yoiu want to save output for testing
+  /*
+  // Write out input system of eqns
+  std::ofstream dat1("matrix_examples_subsamp10/A" + std::to_string(idx) + ".txt", std::ofstream::out);
+  for (int i=0; i < p+3; ++i) {
+      for (int j=0; j < p+2; ++j) {
+        dat1 << mtx_l(i, j) << ", "; 
+      }
+      dat1 << mtx_l(i, p+3) << std::endl;
+  }
+  dat1.close();
+
+  std::ofstream dat2("matrix_examples_subsamp10/b" + std::to_string(idx) + ".txt", std::ofstream::out);
+  for (int i=0; i < p+2; ++i) {
+    dat2 << mtx_v(i, 0) << ", ";
+  }
+  dat2 << mtx_v(p+3, 0);
+  dat2.close();
+  i*/
+
   // Solve the linear system "inplace"
-  if (0 != LU_Solve(mtx_l, mtx_v))
+  int code = 0;
+  code = LU_Solve(mtx_l, mtx_v);
+
+  // Iterative methods (Not in place)
+  //mtx_v = Gauss_Seidel_Solve(mtx_l, mtx_v, 1000);
+  //mtx_v = SOR_Solve(mtx_l, mtx_v, 1000, 0.5);
+  //mtx_v = CG_Solve(mtx_l, mtx_v, 1e-10);
+  
+  if (code != 0)
   {
     throw SingularMatrixError();
   }
+  
+  /*
+  // Write out Boost solution
+  std::ofstream dat3("matrix_examples_subsamp10/x" + std::to_string(idx) + ".txt", std::ofstream::out);
+  for (int i=0; i < p+2; ++i) {
+    dat3 << mtx_v(i, 0) << ", ";
+  }
+  dat3 << mtx_v(p+3, 0);
+  dat3.close();
+
+  // Example (from Wikipedia)
+  std::cout << "TEST" << std::endl;
+  matrix<double> A(2, 2);
+  matrix<double> b(2, 1);
+
+  A(0, 0) = 4;
+  A(0, 1) = 1;
+  A(1, 0) = 1;
+  A(1, 1) = 3;
+
+  b(0, 0) = 1;
+  b(1, 0) = 2;
+
+  matrix<double> x = CG_Solve(A, b, 1e-10);
+  for ( int i = 0; i < 2; ++i) {
+    std::cout << "x[" << i << "] = " << x(i, 0) << std::endl;
+  }
+  // Solution is [0.0909, 0.6364] 
+  */
 }
 
 //-----------------------------------------------------------------------------
