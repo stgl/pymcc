@@ -3,8 +3,11 @@ project(pymcc_lidar)
 
 find_package(PythonInterp)
 find_package(PythonLibs)
+find_package (Boost 1.51)
 
 find_path(BOOST_DIR "boost")
+
+message("Boost directory: ${BOOST_DIR}")
 
 set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_LIST_DIR}/cmake )
 

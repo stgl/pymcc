@@ -15,6 +15,40 @@ configure_file ("./config.h.in"
 include_directories (".")
 include_directories ("./include")
 
+# determine if OpenMP can/should be used
+option(USE_OPENMP "Enable OpenMP?" ON) # set to OFF to disable
+
+# Find OpenMP
+if(MACOSX AND USE_OPENMP)
+    if(CMAKE_C_COMPILER_ID MATCHES "Clang")
+        set(OpenMP_C "${CMAKE_C_COMPILER}")
+        set(OpenMP_C_FLAGS "-openmp -Wno-unused-command-line-argument")
+        set(OpenMP_C_LIB_NAMES "libomp" "libgomp" "libiomp5")
+        set(OpenMP_libomp_LIBRARY ${OpenMP_C_LIB_NAMES})
+        set(OpenMP_libgomp_LIBRARY ${OpenMP_C_LIB_NAMES})
+        set(OpenMP_libiomp5_LIBRARY ${OpenMP_C_LIB_NAMES})
+    endif()
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+      set(OpenMP_CXX "${CMAKE_CXX_COMPILER}")
+      set(OpenMP_CXX_FLAGS "-openmp -Wno-unused-command-line-argument")
+      set(OpenMP_CXX_LIB_NAMES "libomp" "libgomp" "libiomp5")
+      set(OpenMP_libomp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
+      set(OpenMP_libgomp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
+      set(OpenMP_libiomp5_LIBRARY ${OpenMP_CXX_LIB_NAMES})
+    endif()
+endif()
+
+if(USE_OPENMP)
+ FIND_PACKAGE(OpenMP)
+ if(OPENMP_FOUND OR OpenMP_FOUND)
+  message(STATUS "OpenMP flags = ${OpenMP_CXX_FLAGS}")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+ else(OPENMP_FOUND OR OpenMP_FOUND)
+  message(STATUS "OpenMP not supported")
+ endif(OPENMP_FOUND OR OpenMP_FOUND)
+endif(USE_OPENMP)
+
 if (WIN32)
   #  The FindBoost module looks for dynamic libraries by default.  But Boost's
   #  auto-linking on Windows uses static libraries by default.  These two
@@ -24,7 +58,9 @@ if (WIN32)
 endif()
 find_package (Boost 1.51 COMPONENTS filesystem
                                     program_options
-                                    system)
+                                    system
+                                    thread
+                                    iostreams)
 if (NOT Boost_FOUND AND WIN32 AND NOT DEFINED ENV{BOOST_ROOT})
   #  The FindBoost module doesn't work on Windows with BoostPro's binary
   #  distributions when the subminor version is 0 (e.g., 1.39.0):
@@ -44,9 +80,8 @@ if(NOT LibLAS_FOUND)
   find_package(libLAS)
 endif()
 
-
-link_directories ( ${Boost_LIBRARY_DIRS} )
-include_directories ( ${Boost_INCLUDE_DIRS} ${LIBLAS_INCLUDE_DIRS} )
+link_directories ( ${Boost_LIBRARY_DIRS} ${libLAS_LIBRARY_DIRS})
+include_directories ( ${Boost_INCLUDE_DIRS} ${libLAS_INCLUDE_DIRS} )
 
 # FUSION's code for LDA format not integrated yet
 #add_subdirectory (fusion)
@@ -80,50 +115,21 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(MACOSX TRUE)
 endif()
 
-# determine if OpenMP can/should be used
-option(USE_OPENMP "Enable OpenMP?" ON) # set to OFF to disable
-# Find OpenMP
-if(MACOSX AND USE_OPENMP)
-    if(CMAKE_C_COMPILER_ID MATCHES "Clang")
-        set(OpenMP_C "${CMAKE_C_COMPILER}")
-        set(OpenMP_C_FLAGS "-openmp -Wno-unused-command-line-argument")
-        set(OpenMP_C_LIB_NAMES "libomp" "libgomp" "libiomp5")
-        set(OpenMP_libomp_LIBRARY ${OpenMP_C_LIB_NAMES})
-        set(OpenMP_libgomp_LIBRARY ${OpenMP_C_LIB_NAMES})
-        set(OpenMP_libiomp5_LIBRARY ${OpenMP_C_LIB_NAMES})
-    endif()
-    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-      set(OpenMP_CXX "${CMAKE_CXX_COMPILER}")
-      set(OpenMP_CXX_FLAGS "-openmp -Wno-unused-command-line-argument")
-      set(OpenMP_CXX_LIB_NAMES "libomp" "libgomp" "libiomp5")
-      set(OpenMP_libomp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
-      set(OpenMP_libgomp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
-      set(OpenMP_libiomp5_LIBRARY ${OpenMP_CXX_LIB_NAMES})
-    endif()
-endif()
 
-if(USE_OPENMP)
- FIND_PACKAGE(OpenMP)
- if(OPENMP_FOUND OR OpenMP_FOUND)
-  message(STATUS "OpenMP flags = ${OpenMP_CXX_FLAGS}")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
- else(OPENMP_FOUND OR OpenMP_FOUND)
-  message(STATUS "OpenMP not supported")
- endif(OPENMP_FOUND OR OpenMP_FOUND)
-endif(USE_OPENMP)
 
 # make release version
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "lib")
 
 set (PROGRAM_NAME mcc_lidar)
-add_library (${PROGRAM_NAME} STATIC ${SRC_FILES} ${HDR_FILES} ${TPSDEMO_SRCS})
+add_library (${PROGRAM_NAME} SHARED ${SRC_FILES} ${HDR_FILES} ${TPSDEMO_SRCS})
 target_link_libraries (${PROGRAM_NAME}
                        ${Boost_FILESYSTEM_LIBRARY}
                        ${Boost_PROGRAM_OPTIONS_LIBRARY}
                        ${Boost_SYSTEM_LIBRARY}
-                       ${LIBLAS_LIBRARY} )
+                       ${libLAS_LIBRARIES} )
+get_target_property(OUT ${PROGRAM_NAME} LINK_LIBRARIES)
+message("link libraries: ${OUT}")
 
 if (MSVC)
 	set (LIBLAS_AUX_DLL_NAMES comerr32
@@ -164,7 +170,7 @@ if (MSVC)
   endforeach()
   install (FILES ${LIBLAS_AUX_DLLS} DESTINATION bin)
   install (PROGRAMS package/win/set_path.bat DESTINATION bin)
- 
+
   include (InstallRequiredSystemLibraries)
 
   set (DOC_FILE "Documentation.txt")
